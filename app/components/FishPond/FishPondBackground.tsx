@@ -1,11 +1,13 @@
 import { useApplication } from "@pixi/react";
 import { Sprite, Texture } from "pixi.js";
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
 function FishPondBackground() {
   const app = useApplication().app;
 
   const spriteRef = useRef<Sprite | null>(null);
+
+  const backgroundTexture = useMemo(() => Texture.from("background"), []);
 
   useEffect(() => {
     if (spriteRef.current) {
@@ -22,7 +24,7 @@ function FishPondBackground() {
   return (
     <pixiSprite
       ref={spriteRef}
-      texture={Texture.from("background")}
+      texture={backgroundTexture}
       anchor={0.5}
       x={app.screen.width / 2}
       y={app.screen.height / 2}

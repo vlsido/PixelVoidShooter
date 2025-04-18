@@ -1,6 +1,18 @@
-import { useApplication, useTick } from "@pixi/react";
-import { Sprite, Texture, Ticker } from "pixi.js";
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  useApplication,
+  useTick
+} from "@pixi/react";
+import {
+  Sprite,
+  Texture,
+  Ticker
+} from "pixi.js";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState
+} from "react";
 
 interface FishProps {
   speed: number;
@@ -76,6 +88,15 @@ function FishContainer() {
 
   }, [fishes]);
 
+  const changeDirection = useCallback((index: number) => {
+    const fish = fishes.at(index);
+
+    if (fish === undefined) return;
+
+    fish.direction *= -1;
+    fish.speed *= 200;
+  }, []);
+
   useTick((ticker) => animateFishes(ticker));
 
   if (fishes.length === 0) return null;
@@ -89,6 +110,8 @@ function FishContainer() {
             if (ref === undefined) return;
             (fishesRefs.current[index] = ref)
           }}
+          eventMode={"static"}
+          onClick={() => changeDirection(index)}
           texture={fish.texture}
           anchor={0.5}
           x={fish.x}

@@ -1,14 +1,18 @@
-import { Assets } from "pixi.js";
+import { Assets, DisplacementFilter, Sprite } from "pixi.js";
 import {
   useEffect,
   useState
 } from "react";
 import FishPondBackground from "./FishPondBackground";
 import FishContainer from "./FishContainer";
+import WaterOverlay from "./WaterOverlay";
+import { AsciiFilter } from "pixi-filters";
+import { useApplication } from "@pixi/react";
 
 
 function FishPond() {
 
+  const app = useApplication().app;
   const [areAssetsLoaded, setAreAssetsLoaded] = useState<boolean>(false);
 
   useEffect(() => {
@@ -24,6 +28,12 @@ function FishPond() {
     ];
     Assets.load(assets).then(() => {
       setAreAssetsLoaded(true);
+
+      const sprite = Sprite.from("displacement");
+      const filter = new DisplacementFilter({ sprite, scale: 50 });
+      const asciiFilter = new AsciiFilter({});
+
+      app.stage.filters = [filter];
     });
 
   }, []);
@@ -34,6 +44,7 @@ function FishPond() {
     <pixiContainer>
       <FishPondBackground />
       <FishContainer />
+      <WaterOverlay />
     </pixiContainer>
   );
 }
