@@ -84,7 +84,7 @@ function TreesContainer() {
         tree.x += count * (treeWidth + spacing) + spacing * 3;
       }
     });
-  }, [trees]);
+  }, []);
 
   useTick(animateTrees);
 

@@ -70,7 +70,7 @@ function PlanksContainer() {
         plank.x += plankCount * (PLANK_WIDTH + PLANK_GAP) + PLANK_GAP * 1.5;
       }
     });
-  }, [planks]);
+  }, []);
 
   useTick(animatePlanks);
 
