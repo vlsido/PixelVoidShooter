@@ -41,17 +41,18 @@ function TreesContainer() {
 
   const onDrawGraphics = useCallback((graphics: Graphics, tree: ITreeProps) => {
     graphics.clear();
+    graphics.x = tree.x;
     graphics.y = app.screen.height - 20;
-    const trunkWidth = 30;
-    const trunkHeight = tree.height / 4;
+    const trunkWidth = Math.random() * 20 + 20;
+    const trunkHeight = Math.random() * 40 + tree.height / 4;
     const trunkColor = 0x563929;
     graphics.rect(-trunkWidth / 2, -trunkHeight, trunkWidth, trunkHeight)
       .fill({ color: trunkColor });
 
     const crownHeight = tree.height - trunkHeight;
-    const crownLevels = 4;
+    const crownLevels = Math.random() * 5 + 3;
     const crownLevelHeight = crownHeight / crownLevels;
-    const crownWidthIncrement = tree.width / crownLevels;
+    const crownWidthIncrement = Math.random() * 4 + tree.width / crownLevels;
     const crownColor = 0x264d3d;
 
     for (let index = 0; index < crownLevels; index++) {
@@ -98,8 +99,6 @@ function TreesContainer() {
             treesRefs.current[index] = ref
           }}
           draw={(graphics) => onDrawGraphics(graphics, tree)}
-          x={tree.x}
-          y={tree.y}
         />
       )}
     </pixiContainer>
