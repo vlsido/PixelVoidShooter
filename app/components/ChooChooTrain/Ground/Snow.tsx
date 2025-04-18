@@ -1,6 +1,7 @@
 import { useApplication } from "@pixi/react";
 import type { Graphics } from "pixi.js";
 import { useCallback } from "react";
+import { GROUND_HEIGHT } from "../constants/common";
 
 function Snow() {
   const app = useApplication().app;
@@ -8,9 +9,8 @@ function Snow() {
 
   const onDrawGraphics = useCallback((graphics: Graphics) => {
     graphics.clear();
-    const snowHeight = 20;
     graphics
-      .rect(0, app.screen.height - snowHeight, app.screen.width, snowHeight)
+      .rect(0, app.screen.height - GROUND_HEIGHT, app.screen.width, GROUND_HEIGHT)
       .fill("white");
 
   }, [app.screen.width]);
