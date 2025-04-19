@@ -27,10 +27,7 @@ function Rails() {
       <pixiGraphics
         ref={graphicsRef}
         draw={onDrawGraphics}
-        height={20}
-        width={20}
       />
-
     </pixiContainer>
   );
 }

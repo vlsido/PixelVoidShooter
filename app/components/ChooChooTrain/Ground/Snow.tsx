@@ -18,7 +18,6 @@ function Snow() {
   return (
     <pixiGraphics
       width={app.screen.width}
-      height={20}
       draw={onDrawGraphics}
     />
   );

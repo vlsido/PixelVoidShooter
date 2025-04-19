@@ -3,12 +3,12 @@ import Moon from "./Moon";
 import Mountains from "./Mountains";
 import Stars from "./Stars";
 import TreesContainer from "./TreesContainer";
-import Rails from "./Ground/Rails";
 import Ground from "./Ground/Ground";
+import TrainHead from "./Train/TrainHead";
+import TrainSmoke from "./Train/TrainSmoke";
 
 function ChooChooTrain() {
   const app = useApplication().app;
-
 
   return (
     <pixiContainer>
@@ -18,6 +18,10 @@ function ChooChooTrain() {
       <Mountains x={app.screen.width} />
       <TreesContainer />
       <Ground />
+      <pixiContainer>
+        <TrainHead />
+        <TrainSmoke />
+      </pixiContainer>
     </pixiContainer>
   );
 }
