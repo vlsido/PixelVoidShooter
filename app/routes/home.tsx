@@ -3,8 +3,9 @@ import { Application, extend, useExtend } from "@pixi/react";
 import { AsciiFilter } from "pixi-filters";
 import { Container, DisplacementFilter, Graphics, Sprite, TilingSprite } from "pixi.js";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
-import ChooChooTrain from "~/components/ChooChooTrain/ChooChooTrain";
-import FishPond from "~/components/FishPond/FishPond";
+import PixelVoidShooterContainer from "~/components/containers/PixelVoidShooterContainer";
+import ChooChooTrain from "~/components/old_tut/ChooChooTrain/ChooChooTrain";
+import FishPond from "~/components/old_tut/FishPond/FishPond";
 
 export function meta({ }: Route.MetaArgs) {
   return [
@@ -56,10 +57,10 @@ export default function Home() {
       >
         <Application
           resizeTo={wrapperRef}
-          background={"#021f4b"}
+          background={"#212221"}
           failIfMajorPerformanceCaveat={true}
         >
-          <ChooChooTrain />
+          <PixelVoidShooterContainer />
         </Application>
       </div>
     </div>
