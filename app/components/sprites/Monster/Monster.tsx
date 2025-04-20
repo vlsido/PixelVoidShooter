@@ -16,15 +16,15 @@ function Monster(props: MonsterProps) {
   const healthBarRef = useRef<Container | null>(null);
   const healthPointsRefs = useRef<(Graphics | null)[]>([]);
 
-  const x = useMemo(() => Math.random() * app.screen.width, []);
+  const x = useMemo(() => Math.random() * (app.screen.width * 0.85 - app.screen.width * 0.15) + app.screen.width * 0.15, []);
 
   const [health, setHealth] = useState<number>(props.health);
 
   const loadTextures = useCallback(() => {
     const frames = [];
 
-    for (let i = 0; i < 2; i++) {
-      frames.push(Texture.from(`${props.textureName}${i}.png`));
+    for (let frameIndex = 0; frameIndex < 2; frameIndex++) {
+      frames.push(Texture.from(`${props.textureName}${frameIndex}.png`));
     }
 
     return frames;
@@ -52,7 +52,6 @@ function Monster(props: MonsterProps) {
   }, []);
 
   const takeDamage = useCallback(() => {
-    console.log("monster attacked for -1 hp");
     setHealth(health - 1);
   }, [health]);
 
@@ -65,8 +64,6 @@ function Monster(props: MonsterProps) {
     const centerX = app.screen.width / 2;
 
     const dx = time.deltaTime;
-
-    // console.log("healthPointe", healthPointsRefs.current.length);
 
     if (health < healthPointsRefs.current.length) {
       const healthPoint = healthPointsRefs.current.at(healthPointsRefs.current.length - 1);
@@ -104,10 +101,6 @@ function Monster(props: MonsterProps) {
     healthBarRef.current.y = monsterSpriteRef.current.y - 20;
 
   }, [health]);
-
-  useEffect(() => {
-    console.log(monsterRef.current?.width);
-  }, [monsterRef]);
 
   useTick(animateMonster);
 

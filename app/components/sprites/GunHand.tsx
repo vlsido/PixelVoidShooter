@@ -24,8 +24,6 @@ function GunHand() {
     return () => app.stage.removeEventListener("pointermove", copyPosition);
   }, []);
 
-  console.log("gun", gunHandTexture.width);
-
   return (
     <pixiSprite
       ref={gunHandRef}

@@ -59,17 +59,13 @@ function PixelVoidShooterContainer() {
     setMonsters(newMonsters);
   }, [monsters]);
 
-  useEffect(() => {
-    console.log('m', monsters);
-  }, [monsters]);
-
   if (areAssetsLoaded === false) return null;
 
   return (
-    <pixiContainer
-    >
+    <pixiContainer>
       {monsters.map((monster, index) =>
         <Monster
+          key={index}
           textureName={monster.textureName}
           health={monster.health}
           speed={monster.speed}
