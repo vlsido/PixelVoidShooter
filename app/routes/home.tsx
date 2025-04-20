@@ -1,11 +1,9 @@
 import type { Route } from "./+types/home";
-import { Application, extend, useExtend } from "@pixi/react";
+import { Application, useExtend } from "@pixi/react";
 import { AsciiFilter } from "pixi-filters";
-import { Container, DisplacementFilter, Graphics, Sprite, TilingSprite } from "pixi.js";
+import { AnimatedSprite, Container, DisplacementFilter, Graphics, Sprite, TilingSprite } from "pixi.js";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import PixelVoidShooterContainer from "~/components/containers/PixelVoidShooterContainer";
-import ChooChooTrain from "~/components/old_tut/ChooChooTrain/ChooChooTrain";
-import FishPond from "~/components/old_tut/FishPond/FishPond";
 
 export function meta({ }: Route.MetaArgs) {
   return [
@@ -17,6 +15,7 @@ export function meta({ }: Route.MetaArgs) {
 export default function Home() {
   useExtend({
     Sprite,
+    AnimatedSprite,
     TilingSprite,
     DisplacementFilter,
     AsciiFilter,
@@ -26,21 +25,21 @@ export default function Home() {
 
   const wrapperRef = useRef(null);
 
-  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+  const [dimensions, setDimensions] = useState({ width: 800, height: 480 });
 
-  const resize = useCallback(() => {
-    const height = window.innerHeight / 2;
-    const width = height * 2;
-    setDimensions({ width, height });
-  }, []);
+  // const resize = useCallback(() => {
+  //   const height = window.innerHeight / 2;
+  //   const width = height * 2;
+  //   setDimensions({ width, height });
+  // }, []);
 
-  useLayoutEffect(() => {
-    resize();
-
-    window.addEventListener("resize", resize);
-
-    return () => window.removeEventListener("resize", resize);
-  }, []);
+  // useLayoutEffect(() => {
+  //   resize();
+  //
+  //   window.addEventListener("resize", resize);
+  //
+  //   return () => window.removeEventListener("resize", resize);
+  // }, []);
 
   return (
     <div
@@ -49,15 +48,15 @@ export default function Home() {
       Pixel Void Shooter?
       <div
         ref={wrapperRef}
-        className="outline-2 rounded-4xl overflow-hidden"
+        className="outline-2 rounded-4xl cursor-none overflow-hidden"
         style={{
           height: dimensions.height,
-          width: dimensions.width
+          width: dimensions.width,
         }}
       >
         <Application
           resizeTo={wrapperRef}
-          background={"#212221"}
+          background={"#555555"}
           failIfMajorPerformanceCaveat={true}
         >
           <PixelVoidShooterContainer />
