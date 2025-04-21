@@ -1,7 +1,7 @@
+import { useCallback } from "react";
 import { useAtom } from "jotai";
 import { type AmmoProps } from "../types/player";
 import { ammoAtom } from "../atoms/playerAtoms";
-import { useCallback, useEffect } from "react";
 
 export function useAmmo() {
   const [ammo, setAmmo] = useAtom<AmmoProps>(ammoAtom);
@@ -22,9 +22,6 @@ export function useAmmo() {
       currentBullets: ammo.totalBullets
     });
   }, [ammo.totalBullets]);
-
-
-
 
   return { ammo, decrementAmmo, reloadAmmo };
 }

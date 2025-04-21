@@ -1,8 +1,8 @@
-import { useAtomValue } from "jotai";
+import {
+  useEffect,
+  useRef
+} from "react";
 import { BitmapText } from "pixi.js";
-import { useEffect, useRef } from "react";
-import { type AmmoProps } from "../types/player";
-import { ammoAtom } from "../atoms/playerAtoms";
 import { useAmmo } from "../hooks/useAmmo";
 import { useApplication } from "@pixi/react";
 

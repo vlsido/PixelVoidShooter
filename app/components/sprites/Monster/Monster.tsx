@@ -1,8 +1,21 @@
-import { useApplication, useTick } from "@pixi/react";
-import { useSetAtom } from "jotai";
-import { AnimatedSprite, Container, Graphics, Texture, Ticker } from "pixi.js";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ammoAtom } from "~/components/atoms/playerAtoms";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from "react";
+import {
+  useApplication,
+  useTick
+} from "@pixi/react";
+import {
+  AnimatedSprite,
+  Container,
+  Graphics,
+  Texture,
+  Ticker
+} from "pixi.js";
 import { useAmmo } from "~/components/hooks/useAmmo";
 
 export interface MonsterProps {

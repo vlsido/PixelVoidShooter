@@ -1,6 +1,10 @@
+import {
+  useCallback,
+  useEffect,
+  useRef
+} from "react";
 import { useApplication } from "@pixi/react";
 import { FederatedPointerEvent, Graphics } from "pixi.js";
-import { useCallback, useEffect, useRef } from "react";
 
 function Crosshair() {
   const app = useApplication().app;

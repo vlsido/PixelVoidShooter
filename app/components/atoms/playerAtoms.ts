@@ -1,5 +1,8 @@
 import { atom } from "jotai";
-import { type AmmoProps, type GunProps } from "../types/player";
+import {
+  type AmmoProps,
+  type GunProps
+} from "../types/player";
 
 // export const playerAtom = atom<PlayerProps>();
 

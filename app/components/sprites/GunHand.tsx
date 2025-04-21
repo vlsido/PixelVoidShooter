@@ -1,10 +1,14 @@
-import { useApplication } from "@pixi/react";
-import { FederatedPointerEvent, Sprite, Texture, Ticker } from "pixi.js";
 import {
   useEffect,
   useMemo,
   useRef
 } from "react";
+import { useApplication } from "@pixi/react";
+import {
+  FederatedPointerEvent,
+  Sprite,
+  Texture,
+} from "pixi.js";
 
 function GunHand() {
   const app = useApplication().app;

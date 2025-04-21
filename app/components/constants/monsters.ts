@@ -1,4 +1,3 @@
-
 export const SLOW_MONSTER_HEALTH = 4;
 export const FLYING_MONSTER_HEALTH = 2;
 
@@ -8,9 +7,9 @@ export const SLOW_MONSTER = {
   speed: 1,
 };
 
-
 export const FLYING_MONSTER = {
   textureName: "flyingMonster",
   health: FLYING_MONSTER_HEALTH,
   speed: 3,
 };
+

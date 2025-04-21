@@ -1,8 +1,22 @@
 import type { Route } from "./+types/home";
-import { Application, useExtend } from "@pixi/react";
+import {
+  Application,
+  useExtend
+} from "@pixi/react";
 import { AsciiFilter } from "pixi-filters";
-import { AnimatedSprite, BitmapText, Container, DisplacementFilter, Graphics, Sprite, Text, TilingSprite } from "pixi.js";
-import { useCallback, useLayoutEffect, useRef, useState } from "react";
+import {
+  AnimatedSprite,
+  BitmapText,
+  Container,
+  DisplacementFilter,
+  Graphics,
+  Sprite,
+  TilingSprite
+} from "pixi.js";
+import {
+  useRef,
+  useState
+} from "react";
 import PixelVoidShooterContainer from "~/components/containers/PixelVoidShooterContainer";
 
 export function meta({ }: Route.MetaArgs) {
@@ -27,20 +41,6 @@ export default function Home() {
   const wrapperRef = useRef(null);
 
   const [dimensions, setDimensions] = useState({ width: 800, height: 480 });
-
-  // const resize = useCallback(() => {
-  //   const height = window.innerHeight / 2;
-  //   const width = height * 2;
-  //   setDimensions({ width, height });
-  // }, []);
-
-  // useLayoutEffect(() => {
-  //   resize();
-  //
-  //   window.addEventListener("resize", resize);
-  //
-  //   return () => window.removeEventListener("resize", resize);
-  // }, []);
 
   return (
     <div

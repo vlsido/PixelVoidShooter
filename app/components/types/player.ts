@@ -1,6 +1,6 @@
-export interface PlayerProps {
-
-}
+// export interface PlayerProps {
+//
+// }
 
 export interface StatsProps {
   /**
