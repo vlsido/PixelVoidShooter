@@ -1,4 +1,4 @@
-# PixelVoidShooter 🚀!
+# PixelVoidShooter 🚀
 
 This is a Web-based game made using PixiJS, React, and React Router
 
