@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@pixi/react": "^8.0.0-beta.25",
+    "@pixi/ui": "^2.2.3",
     "@react-router/node": "^7.5.0",
     "@react-router/serve": "^7.5.0",
     "isbot": "^5.1.17",
