@@ -1,6 +1,9 @@
 import { useApplication, useTick } from "@pixi/react";
+import { useSetAtom } from "jotai";
 import { AnimatedSprite, Container, Graphics, Texture, Ticker } from "pixi.js";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { ammoAtom } from "~/components/atoms/playerAtoms";
+import { useAmmo } from "~/components/hooks/useAmmo";
 
 export interface MonsterProps {
   textureName: string;
@@ -11,6 +14,9 @@ export interface MonsterProps {
 
 function Monster(props: MonsterProps) {
   const app = useApplication().app;
+
+  const { ammo, decrementAmmo } = useAmmo();
+
   const monsterRef = useRef<Container | null>(null);
   const monsterSpriteRef = useRef<AnimatedSprite | null>(null);
   const healthBarRef = useRef<Container | null>(null);
@@ -51,9 +57,12 @@ function Monster(props: MonsterProps) {
       .stroke({ color: "black", width: 2 });
   }, []);
 
-  const takeDamage = useCallback(() => {
-    setHealth(health - 1);
-  }, [health]);
+  const dealDamage = useCallback(() => {
+    if (ammo.currentBullets > 0) {
+      decrementAmmo();
+      setHealth(health - 1);
+    }
+  }, [ammo, health]);
 
   const animateMonster = useCallback((time: Ticker) => {
     if (monsterSpriteRef.current === null || healthBarRef.current === null) return;
@@ -129,7 +138,7 @@ function Monster(props: MonsterProps) {
         ref={monsterSpriteRef}
         textures={textures}
         eventMode="static"
-        onPointerDown={takeDamage}
+        onPointerDown={dealDamage}
         scale={1}
         animationSpeed={0.1}
         x={x}

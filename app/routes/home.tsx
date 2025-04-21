@@ -1,7 +1,7 @@
 import type { Route } from "./+types/home";
 import { Application, useExtend } from "@pixi/react";
 import { AsciiFilter } from "pixi-filters";
-import { AnimatedSprite, Container, DisplacementFilter, Graphics, Sprite, TilingSprite } from "pixi.js";
+import { AnimatedSprite, BitmapText, Container, DisplacementFilter, Graphics, Sprite, Text, TilingSprite } from "pixi.js";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import PixelVoidShooterContainer from "~/components/containers/PixelVoidShooterContainer";
 
@@ -17,6 +17,7 @@ export default function Home() {
     Sprite,
     AnimatedSprite,
     TilingSprite,
+    BitmapText,
     DisplacementFilter,
     AsciiFilter,
     Graphics,

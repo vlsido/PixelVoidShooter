@@ -8,6 +8,8 @@ import slowMonsterJson from "/slowMonster/slowMonster.json?url";
 import flyingMonsterJson from "/flyingMonster/flyingMonster.json?url";
 import Monster from "../sprites/Monster/Monster";
 import { FLYING_MONSTER, SLOW_MONSTER } from "../constants/monsters";
+import HUD from "./HUD";
+import { useAmmo } from "../hooks/useAmmo";
 
 type Monster = {
   textureName: string;
@@ -16,28 +18,39 @@ type Monster = {
 }
 
 function PixelVoidShooterContainer() {
-
   const app = useApplication().app;
   const [areAssetsLoaded, setAreAssetsLoaded] = useState<boolean>(false);
+  const { reloadAmmo } = useAmmo();
 
   const [monsters, setMonsters] = useState<Monster[]>([
-    {
-      textureName: "slowMonster",
-      health: 4,
-      speed: 1
-    },
-    {
-      textureName: "flyingMonster",
-      health: 3,
-      speed: 1
-    },
+    SLOW_MONSTER,
+    FLYING_MONSTER
   ]);
+
+  useEffect(() => {
+    function keyDown(e: KeyboardEvent) {
+      switch (e.key) {
+        case "R":
+          reloadAmmo();
+          break;
+
+        case "r":
+          reloadAmmo();
+          break;
+      }
+    };
+
+    window.addEventListener("keydown", keyDown);
+
+    return () => window.removeEventListener("keydown", keyDown);
+  }, []);
 
   useEffect(() => {
     const assets = [
       { alias: 'gunHand', src: gunHandUrl },
       slowMonsterJson,
-      flyingMonsterJson
+      flyingMonsterJson,
+      "https://pixijs.com/assets/bitmap-font/desyrel.xml"
     ];
 
     Assets.load(assets).then(() => {
@@ -51,12 +64,9 @@ function PixelVoidShooterContainer() {
 
 
   const onKillMonster = useCallback(() => {
+    const newMonster = Math.round(Math.random()) === 1 ? SLOW_MONSTER : FLYING_MONSTER;
 
-    const newMonsters = [...monsters];
-
-    newMonsters.push(Math.round(Math.random()) === 1 ? SLOW_MONSTER : FLYING_MONSTER);
-
-    setMonsters(newMonsters);
+    setMonsters([...monsters, newMonster]);
   }, [monsters]);
 
   if (areAssetsLoaded === false) return null;
@@ -74,6 +84,7 @@ function PixelVoidShooterContainer() {
       )}
       <GunHand />
       <Crosshair />
+      <HUD />
     </pixiContainer>
   );
 }
