@@ -31,7 +31,7 @@ export interface MonsterProps {
 function Monster(props: MonsterProps) {
   const app = useApplication().app;
 
-  const { ammo, decrementAmmo } = useAmmo();
+  const { ammo, decrementAmmo, reloadProgress } = useAmmo();
 
   const monsterRef = useRef<Container | null>(null);
   const monsterSpriteRef = useRef<AnimatedSprite | null>(null);
@@ -75,11 +75,12 @@ function Monster(props: MonsterProps) {
 
 
   const dealDamage = useCallback(() => {
-    if (ammo.currentBullets > 0) {
+    console.log('reload', reloadProgress);
+    if (ammo.currentBullets > 0 && reloadProgress === 0) {
       decrementAmmo(ammo);
       setHealth(health - 1);
     }
-  }, [ammo, health]);
+  }, [ammo, health, reloadProgress]);
 
   const animateMonster = useCallback((time: Ticker) => {
     if (monsterSpriteRef.current === null || healthBarRef.current === null) return;

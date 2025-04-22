@@ -13,7 +13,7 @@ export const ammoAtom = atom<AmmoProps>({
   currentBullets: 13,
 });
 
-export const reloadProgressAtom = atom<number>(100);
+export const reloadProgressAtom = atom<number>(0);
 
 export const pistolAtom = atom<GunProps>(
   {
