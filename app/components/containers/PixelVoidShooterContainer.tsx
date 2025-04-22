@@ -11,6 +11,7 @@ import Crosshair from "../graphics/Crosshair";
 import gunHandUrl from "/gunHand.png";
 import slowMonsterJson from "/slowMonster/slowMonster.json?url";
 import slowMonsterAttackStanceJson from "/slowMonsterAttackStance/slowMonsterAttackStance.json?url";
+import slowMonsterAttackJson from "/slowMonsterAttack/slowMonsterAttack.json?url";
 import flyingMonsterJson from "/flyingMonster/flyingMonster.json?url";
 import flyingMonsterAttackStanceJson from "/flyingMonsterAttackStance/flyingMonsterAttackStance.json?url";
 import flyingMonsterAttackJson from "/flyingMonsterAttack/flyingMonsterAttack.json?url";
@@ -21,9 +22,6 @@ import {
 } from "../constants/monsters";
 import HUD from "./HUD";
 import { useAmmo } from "../hooks/useAmmo";
-import { useAtom, useSetAtom } from "jotai";
-import type { AmmoProps } from "../types/player";
-import { ammoAtom, reloadProgressAtom } from "../atoms/playerAtoms";
 
 type Monster = {
   textureName: string;
@@ -52,6 +50,7 @@ function PixelVoidShooterContainer() {
       { alias: 'gunHand', src: gunHandUrl },
       slowMonsterJson,
       slowMonsterAttackStanceJson,
+      slowMonsterAttackJson,
       flyingMonsterJson,
       flyingMonsterAttackStanceJson,
       flyingMonsterAttackJson,

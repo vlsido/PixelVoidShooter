@@ -30,7 +30,11 @@ type MonsterState = "GO" | "ATTACK_STANCE" | "ATTACK";
 function Monster(props: MonsterProps) {
   const app = useApplication().app;
 
-  const { ammo, decrementAmmo, reloadProgress } = useAmmo();
+  const {
+    ammo,
+    decrementAmmo,
+    reloadProgress
+  } = useAmmo();
 
   const monsterRef = useRef<Container | null>(null);
   const monsterSpriteRef = useRef<AnimatedSprite | null>(null);
