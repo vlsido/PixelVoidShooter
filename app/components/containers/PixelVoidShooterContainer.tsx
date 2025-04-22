@@ -9,6 +9,7 @@ import { Assets } from "pixi.js";
 import { useApplication } from "@pixi/react";
 import Crosshair from "../graphics/Crosshair";
 import gunHandUrl from "/gunHand.png";
+import heartJson from "/heart/heart.json?url";
 import slowMonsterJson from "/slowMonster/slowMonster.json?url";
 import slowMonsterAttackStanceJson from "/slowMonsterAttackStance/slowMonsterAttackStance.json?url";
 import slowMonsterAttackJson from "/slowMonsterAttack/slowMonsterAttack.json?url";
@@ -48,6 +49,7 @@ function PixelVoidShooterContainer() {
   useEffect(() => {
     const assets = [
       { alias: 'gunHand', src: gunHandUrl },
+      heartJson,
       slowMonsterJson,
       slowMonsterAttackStanceJson,
       slowMonsterAttackJson,
