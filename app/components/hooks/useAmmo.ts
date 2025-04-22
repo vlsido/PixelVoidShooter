@@ -1,27 +1,30 @@
-import { useCallback } from "react";
-import { useAtom } from "jotai";
+import { useContext } from "react";
+import { useAtomValue } from "jotai";
 import { type AmmoProps } from "../types/player";
-import { ammoAtom } from "../atoms/playerAtoms";
+import {
+  ammoAtom,
+  reloadProgressAtom
+} from "../atoms/playerAtoms";
+import { PlayerContext } from "../contexts/PlayerContext";
 
 export function useAmmo() {
-  const [ammo, setAmmo] = useAtom<AmmoProps>(ammoAtom);
+  const {
+    decrementAmmo,
+    reloadAmmo
+  } = useContext(PlayerContext);
 
-  const decrementAmmo = useCallback(() => {
-    if (ammo.currentBullets === 0) return;
+  const ammo = useAtomValue<AmmoProps>(ammoAtom);
+  const reloadProgress = useAtomValue(reloadProgressAtom);
 
-    setAmmo({
-      totalBullets: ammo.totalBullets,
-      currentBullets: ammo.currentBullets - 1
-    });
+  if (decrementAmmo == null
+    || reloadAmmo == null) {
+    throw new Error("useContext(PlayerContext) must be used under PlayContextProvider");
+  }
 
-  }, [ammo]);
-
-  const reloadAmmo = useCallback(() => {
-    setAmmo({
-      totalBullets: ammo.totalBullets,
-      currentBullets: ammo.totalBullets
-    });
-  }, [ammo.totalBullets]);
-
-  return { ammo, decrementAmmo, reloadAmmo };
+  return {
+    decrementAmmo,
+    reloadAmmo,
+    ammo,
+    reloadProgress
+  };
 }

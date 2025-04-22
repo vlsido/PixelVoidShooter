@@ -17,6 +17,9 @@ import {
   Ticker
 } from "pixi.js";
 import { useAmmo } from "~/components/hooks/useAmmo";
+import { useAtom, useAtomValue } from "jotai";
+import { ammoAtom } from "~/components/atoms/playerAtoms";
+import type { AmmoProps } from "~/components/types/player";
 
 export interface MonsterProps {
   textureName: string;
@@ -70,9 +73,10 @@ function Monster(props: MonsterProps) {
       .stroke({ color: "black", width: 2 });
   }, []);
 
+
   const dealDamage = useCallback(() => {
     if (ammo.currentBullets > 0) {
-      decrementAmmo();
+      decrementAmmo(ammo);
       setHealth(health - 1);
     }
   }, [ammo, health]);

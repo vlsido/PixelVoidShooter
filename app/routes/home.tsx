@@ -1,3 +1,4 @@
+import { CircularProgressBar } from "@pixi/ui";
 import type { Route } from "./+types/home";
 import {
   Application,
@@ -18,6 +19,7 @@ import {
   useState
 } from "react";
 import PixelVoidShooterContainer from "~/components/containers/PixelVoidShooterContainer";
+import Storage from "~/components/contexts/Storage";
 
 export function meta({ }: Route.MetaArgs) {
   return [
@@ -31,6 +33,7 @@ export default function Home() {
     Sprite,
     AnimatedSprite,
     TilingSprite,
+    CircularProgressBar,
     BitmapText,
     DisplacementFilter,
     AsciiFilter,
@@ -55,13 +58,15 @@ export default function Home() {
           width: dimensions.width,
         }}
       >
-        <Application
-          resizeTo={wrapperRef}
-          background={"#555555"}
-          failIfMajorPerformanceCaveat={true}
-        >
-          <PixelVoidShooterContainer />
-        </Application>
+        <Storage>
+          <Application
+            resizeTo={wrapperRef}
+            background={"#555555"}
+            failIfMajorPerformanceCaveat={true}
+          >
+            <PixelVoidShooterContainer />
+          </Application>
+        </Storage>
       </div>
     </div>
   );

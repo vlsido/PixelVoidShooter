@@ -1,6 +1,7 @@
 import {
   useCallback,
   useEffect,
+  useRef,
   useState
 } from "react";
 import GunHand from "../sprites/GunHand";
@@ -17,6 +18,9 @@ import {
 } from "../constants/monsters";
 import HUD from "./HUD";
 import { useAmmo } from "../hooks/useAmmo";
+import { useAtom, useSetAtom } from "jotai";
+import type { AmmoProps } from "../types/player";
+import { ammoAtom, reloadProgressAtom } from "../atoms/playerAtoms";
 
 type Monster = {
   textureName: string;
@@ -27,14 +31,18 @@ type Monster = {
 function PixelVoidShooterContainer() {
   const app = useApplication().app;
 
-  const { reloadAmmo } = useAmmo();
-
   const [areAssetsLoaded, setAreAssetsLoaded] = useState<boolean>(false);
 
   const [monsters, setMonsters] = useState<Monster[]>([
     SLOW_MONSTER,
     FLYING_MONSTER
   ]);
+
+  const { ammo, reloadAmmo } = useAmmo();
+
+  const ammoRef = useRef(ammo);
+
+  ammoRef.current = ammo;
 
   useEffect(() => {
     const assets = [
@@ -57,11 +65,11 @@ function PixelVoidShooterContainer() {
     function keyDown(e: KeyboardEvent) {
       switch (e.key) {
         case "R":
-          reloadAmmo();
+          reloadAmmo(ammoRef.current);
           break;
 
         case "r":
-          reloadAmmo();
+          reloadAmmo(ammoRef.current);
           break;
       }
     };
