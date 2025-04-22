@@ -17,6 +17,8 @@ import {
   Ticker
 } from "pixi.js";
 import { useAmmo } from "~/components/hooks/useAmmo";
+import { FLYING_MONSTER_LEFT_EYE_CENTER, FLYING_MONSTER_RIGHT_EYE_CENTER, FLYING_MONSTER_TEXTURE_NAME, SLOW_MONSTER_TEXTURE_NAME } from "~/components/constants/monsters";
+import { type Position } from "~/components/types/common";
 
 export interface MonsterProps {
   textureName: string;
@@ -41,13 +43,11 @@ function Monster(props: MonsterProps) {
   const healthBarRef = useRef<Container | null>(null);
   const healthPointsRefs = useRef<(Graphics | null)[]>([]);
 
+  const laserGraphicsRef = useRef<Graphics | null>(null);
+
   const x = useMemo(() => Math.random() * (app.screen.width * 0.85 - app.screen.width * 0.15) + app.screen.width * 0.15, []);
 
   const [state, setState] = useState<MonsterState>("GO");
-
-  useEffect(() => {
-    console.log("state", state);
-  }, [state]);
 
   const [health, setHealth] = useState<number>(props.health);
 
@@ -85,6 +85,25 @@ function Monster(props: MonsterProps) {
     }
   }, [health]);
 
+  const laserLinePositionRef = useRef<Position>({ x: 0, y: 0 });
+
+  useEffect(() => {
+    switch (state) {
+      case "ATTACK_STANCE":
+        setTimeout(() => {
+          setState("ATTACK");
+        }, 3000);
+        break;
+      case "ATTACK":
+        setTimeout(() => {
+          laserGraphicsRef.current?.clear();
+          laserLinePositionRef.current = { x: 0, y: 0 };
+          setState("ATTACK_STANCE");
+        }, 1500);
+        break;
+    }
+  }, [state]);
+
   const onDrawHealthBar = useCallback((graphics: Graphics, index: number) => {
     graphics.clear();
     graphics
@@ -100,6 +119,65 @@ function Monster(props: MonsterProps) {
       setHealth(health - 1);
     }
   }, [ammo, health, reloadProgress]);
+
+
+  const attackAnimation = useCallback(() => {
+    switch (props.textureName) {
+      case SLOW_MONSTER_TEXTURE_NAME:
+        break;
+      case FLYING_MONSTER_TEXTURE_NAME:
+        if (
+          laserGraphicsRef.current == null
+          || monsterSpriteRef.current == null
+        ) return;
+
+        laserGraphicsRef.current.clear();
+
+        const laserWidth = 10;
+
+        const startPosition: Position = {
+          x: monsterSpriteRef.current.x + (FLYING_MONSTER_LEFT_EYE_CENTER.x * monsterSpriteRef.current.scale.x) - laserWidth / 2,
+          y: monsterSpriteRef.current.y + (FLYING_MONSTER_LEFT_EYE_CENTER.y * monsterSpriteRef.current.scale.x) - laserWidth / 2
+        };
+
+        if (
+          laserLinePositionRef.current.x === 0
+          && laserLinePositionRef.current.y === 0
+        ) {
+          laserLinePositionRef.current = {
+            x: startPosition.x,
+            y: startPosition.y
+          }
+        }
+
+        if (laserLinePositionRef.current.x < app.screen.width / 2) {
+          laserLinePositionRef.current.x = laserLinePositionRef.current.x + (app.screen.width / 2 - startPosition.x) * 0.2;
+        }
+
+        if (laserLinePositionRef.current.y < app.screen.height) {
+          laserLinePositionRef.current.y = laserLinePositionRef.current.y + (app.screen.height - startPosition.y) * 0.2;
+        }
+
+        laserGraphicsRef.current
+          .moveTo(
+            startPosition.x,
+            startPosition.y)
+          .lineTo(
+            laserLinePositionRef.current.x,
+            laserLinePositionRef.current.y)
+          .stroke({ color: 0xa30707, width: 10, cap: "round" });
+
+        laserGraphicsRef.current
+          .moveTo(
+            monsterSpriteRef.current.x + (FLYING_MONSTER_RIGHT_EYE_CENTER.x * monsterSpriteRef.current.scale.x) - laserWidth / 2,
+            monsterSpriteRef.current.y + (FLYING_MONSTER_RIGHT_EYE_CENTER.y * monsterSpriteRef.current.scale.x) - laserWidth / 2)
+          .lineTo(
+            laserLinePositionRef.current.x + 20,
+            laserLinePositionRef.current.y)
+          .stroke({ color: 0xa30707, width: 10, cap: "round" });
+        break;
+    }
+  }, []);
 
   const animateMonster = useCallback((time: Ticker) => {
     if (monsterSpriteRef.current === null || healthBarRef.current === null) return;
@@ -140,15 +218,34 @@ function Monster(props: MonsterProps) {
         monsterSpriteRef.current.y += 0.5;
       }
     } else {
-      setState("ATTACK_STANCE");
+      if (state === "GO") {
+        setState("ATTACK_STANCE");
+      }
     }
 
     healthBarRef.current.x = monsterSpriteRef.current.x;
     healthBarRef.current.y = monsterSpriteRef.current.y - 20;
 
-  }, [health]);
+
+    if (state === "ATTACK") {
+      attackAnimation();
+    }
+
+  }, [health, state]);
+
 
   useTick(animateMonster);
+
+  const onDrawLaserGraphics = useCallback((graphics: Graphics) => {
+    if (monsterSpriteRef.current == null) return;
+
+    if (props.textureName !== FLYING_MONSTER_TEXTURE_NAME) return;
+
+    graphics
+      .moveTo(monsterSpriteRef.current.x, monsterSpriteRef.current.y)
+      .lineTo(monsterSpriteRef.current.x, monsterSpriteRef.current.y + 300)
+      .stroke({ color: 0xff0855, width: 5, cap: "round" });
+  }, []);
 
   if (textures.length === 0 || health <= 0) return null;
 
@@ -179,6 +276,10 @@ function Monster(props: MonsterProps) {
         scale={1}
         animationSpeed={0.1}
         x={x}
+      />
+      <pixiGraphics
+        ref={laserGraphicsRef}
+        draw={onDrawLaserGraphics}
       />
     </pixiContainer>
   );
