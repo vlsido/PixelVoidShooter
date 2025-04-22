@@ -22,7 +22,7 @@ function Ammo() {
     bitmapRef.current.text = `${ammo.currentBullets}/${ammo.totalBullets}`;
     bitmapRef.current.style =
     {
-      fontSize: 55,
+      fontSize: 36,
       align: "center"
     }
 
@@ -30,7 +30,7 @@ function Ammo() {
 
   useEffect(() => {
     if (progressRef.current === null) return;
-    if (reloadProgress === 0 || reloadProgress === 100) {
+    if (reloadProgress === 0) {
       progressRef.current.alpha = 0;
     }
 
@@ -38,8 +38,8 @@ function Ammo() {
       progressRef.current.alpha = 1;
       progressRef.current.progress = reloadProgress;
     }
-    progressRef.current.x = 100;
-    progressRef.current.y = 400;
+    progressRef.current.x = app.screen.width * 0.1;
+    progressRef.current.y = app.screen.height - 100;
 
   }, [reloadProgress]);
 
@@ -58,7 +58,7 @@ function Ammo() {
       <pixiBitmapText
         ref={bitmapRef}
         text="13/13"
-        x={app.screen.width * 0.05}
+        x={app.screen.width * 0.06}
       />
     </pixiContainer>
   );

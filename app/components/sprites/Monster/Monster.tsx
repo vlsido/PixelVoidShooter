@@ -17,9 +17,6 @@ import {
   Ticker
 } from "pixi.js";
 import { useAmmo } from "~/components/hooks/useAmmo";
-import { useAtom, useAtomValue } from "jotai";
-import { ammoAtom } from "~/components/atoms/playerAtoms";
-import type { AmmoProps } from "~/components/types/player";
 
 export interface MonsterProps {
   textureName: string;
@@ -27,6 +24,8 @@ export interface MonsterProps {
   speed: number;
   onKill: () => void;
 }
+
+type MonsterState = "GO" | "ATTACK_STANCE" | "ATTACK";
 
 function Monster(props: MonsterProps) {
   const app = useApplication().app;
@@ -40,23 +39,40 @@ function Monster(props: MonsterProps) {
 
   const x = useMemo(() => Math.random() * (app.screen.width * 0.85 - app.screen.width * 0.15) + app.screen.width * 0.15, []);
 
+  const [state, setState] = useState<MonsterState>("GO");
+
+  useEffect(() => {
+    console.log("state", state);
+  }, [state]);
+
   const [health, setHealth] = useState<number>(props.health);
 
   const loadTextures = useCallback(() => {
+    let textureState = "";
+    switch (state) {
+      case "GO":
+        textureState = "";
+        break;
+      case "ATTACK_STANCE":
+        textureState = "AttackStance";
+        break;
+      case "ATTACK":
+        textureState = "Attack";
+    }
     const frames = [];
 
-    for (let frameIndex = 0; frameIndex < 2; frameIndex++) {
-      frames.push(Texture.from(`${props.textureName}${frameIndex}.png`));
+    for (let frameIndex = 0; frameIndex < 3; frameIndex++) {
+      frames.push(Texture.from(`${props.textureName}${textureState}${frameIndex}.png`));
     }
 
     return frames;
-  }, []);
+  }, [state]);
 
-  const [textures] = useState<Texture[]>(loadTextures);
+  const textures = useMemo(loadTextures, [state]);
 
   useEffect(() => {
     monsterSpriteRef.current?.play();
-  }, []);
+  }, [textures]);
 
   useEffect(() => {
     if (health <= 0) {
@@ -72,7 +88,6 @@ function Monster(props: MonsterProps) {
       .fill("red")
       .stroke({ color: "black", width: 2 });
   }, []);
-
 
   const dealDamage = useCallback(() => {
     console.log('reload', reloadProgress);
@@ -121,7 +136,7 @@ function Monster(props: MonsterProps) {
         monsterSpriteRef.current.y += 0.5;
       }
     } else {
-      monsterSpriteRef.current.stop();
+      setState("ATTACK_STANCE");
     }
 
     healthBarRef.current.x = monsterSpriteRef.current.x;

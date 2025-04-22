@@ -10,7 +10,10 @@ import { useApplication } from "@pixi/react";
 import Crosshair from "../graphics/Crosshair";
 import gunHandUrl from "/gunHand.png";
 import slowMonsterJson from "/slowMonster/slowMonster.json?url";
+import slowMonsterAttackStanceJson from "/slowMonsterAttackStance/slowMonsterAttackStance.json?url";
 import flyingMonsterJson from "/flyingMonster/flyingMonster.json?url";
+import flyingMonsterAttackStanceJson from "/flyingMonsterAttackStance/flyingMonsterAttackStance.json?url";
+import flyingMonsterAttackJson from "/flyingMonsterAttack/flyingMonsterAttack.json?url";
 import Monster from "../sprites/Monster/Monster";
 import {
   FLYING_MONSTER,
@@ -48,7 +51,10 @@ function PixelVoidShooterContainer() {
     const assets = [
       { alias: 'gunHand', src: gunHandUrl },
       slowMonsterJson,
+      slowMonsterAttackStanceJson,
       flyingMonsterJson,
+      flyingMonsterAttackStanceJson,
+      flyingMonsterAttackJson,
       "https://pixijs.com/assets/bitmap-font/desyrel.xml"
     ];
 
