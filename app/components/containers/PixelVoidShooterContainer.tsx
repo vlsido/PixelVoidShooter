@@ -1,6 +1,7 @@
 import {
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState
 } from "react";
@@ -29,6 +30,9 @@ import Background from "./Background";
 import DeathScreen from "./DeathScreen";
 import { usePlayer } from "../hooks/usePlayer";
 import Menu from "./Menu";
+import { useAtom } from "jotai";
+import { isPausedAtom } from "../atoms/gameAtoms";
+import { type AmmoProps } from "../types/player";
 
 type Monster = {
   textureName: string;
@@ -48,9 +52,15 @@ function PixelVoidShooterContainer() {
 
   const { health } = usePlayer();
 
+  const [isPaused, setIsPaused] = useAtom<boolean>(isPausedAtom);
+
+  const isPausedRef = useRef<boolean>(isPaused);
+
+  isPausedRef.current = isPaused;
+
   const { ammo, reloadAmmo } = useAmmo();
 
-  const ammoRef = useRef(ammo);
+  const ammoRef = useRef<AmmoProps>(ammo);
 
   ammoRef.current = ammo;
 
@@ -84,7 +94,6 @@ function PixelVoidShooterContainer() {
 
     app.renderer.events.cursorStyles.default = "crosshair";
 
-
     app.stage.eventMode = "static";
 
     app.stage.hitArea = app.screen;
@@ -92,7 +101,12 @@ function PixelVoidShooterContainer() {
 
   useEffect(() => {
     function keyDown(e: KeyboardEvent) {
+      console.log("e.key", e);
       switch (e.key) {
+        case "Escape":
+          setIsPaused(!isPausedRef.current);
+          break;
+
         case "R":
           reloadAmmo(ammoRef.current);
           break;
@@ -108,6 +122,10 @@ function PixelVoidShooterContainer() {
     return () => window.removeEventListener("keydown", keyDown);
   }, []);
 
+  useEffect(() => {
+    console.log('asd', isPaused);
+  }, [isPaused]);
+
   const onKillMonster = useCallback(() => {
     const newMonster = Math.round(Math.random()) === 1
       ? SLOW_MONSTER
@@ -118,11 +136,12 @@ function PixelVoidShooterContainer() {
 
   if (areAssetsLoaded === false) return null;
 
-  if (health !== 0) return <DeathScreen />
+  if (health === 0) return <DeathScreen />
 
   return (
     <pixiContainer
       cursor="default"
+      eventMode="static"
     >
       <Background />
       {monsters.map((monster, index) =>

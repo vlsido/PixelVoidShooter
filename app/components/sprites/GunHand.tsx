@@ -9,16 +9,25 @@ import {
   Sprite,
   Texture,
 } from "pixi.js";
+import { useAtomValue } from "jotai";
+import { isPausedAtom } from "../atoms/gameAtoms";
 
 function GunHand() {
   const app = useApplication().app;
+
+  const isPaused = useAtomValue<boolean>(isPausedAtom);
+
+  const isPausedRef = useRef<boolean>(isPaused);
+
+  isPausedRef.current = isPaused;
+
   const gunHandRef = useRef<Sprite | null>(null);
 
   const gunHandTexture = useMemo(() => Texture.from("gunHand"), []);
 
   useEffect(() => {
     function copyPosition(e: FederatedPointerEvent) {
-      if (gunHandRef.current === null) return;
+      if (gunHandRef.current === null || isPausedRef.current === true) return;
 
       gunHandRef.current.x = e.globalX + 100;
     }

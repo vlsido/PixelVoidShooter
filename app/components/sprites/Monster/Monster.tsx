@@ -20,6 +20,8 @@ import { useAmmo } from "~/components/hooks/useAmmo";
 import { FLYING_MONSTER_LEFT_EYE_CENTER, FLYING_MONSTER_RIGHT_EYE_CENTER, FLYING_MONSTER_TEXTURE_NAME, SLOW_MONSTER_TEXTURE_NAME } from "~/components/constants/monsters";
 import { type Position } from "~/components/types/common";
 import { usePlayer } from "~/components/hooks/usePlayer";
+import { useAtomValue } from "jotai";
+import { isPausedAtom } from "~/components/atoms/gameAtoms";
 
 export interface MonsterProps {
   textureName: string;
@@ -27,6 +29,8 @@ export interface MonsterProps {
   speed: number;
   onKill: () => void;
 }
+
+
 
 type MonsterState = "GO" | "ATTACK_STANCE" | "ATTACK";
 
@@ -43,6 +47,8 @@ function Monster(props: MonsterProps) {
     decrementAmmo,
     reloadProgress
   } = useAmmo();
+
+  const isPaused = useAtomValue<boolean>(isPausedAtom);
 
   const monsterRef = useRef<Container | null>(null);
   const monsterSpriteRef = useRef<AnimatedSprite | null>(null);
@@ -86,8 +92,13 @@ function Monster(props: MonsterProps) {
   const textures = useMemo(loadTextures, [state]);
 
   useEffect(() => {
+    if (isPaused) {
+      monsterSpriteRef.current?.stop();
+      return;
+    }
+
     monsterSpriteRef.current?.play();
-  }, [textures]);
+  }, [textures, isPaused]);
 
   useEffect(() => {
     if (health <= 0) {
@@ -102,6 +113,12 @@ function Monster(props: MonsterProps) {
 
 
   useEffect(() => {
+    if (isPaused) {
+      if (actionTimeoutId.current !== null) {
+        clearTimeout(actionTimeoutId.current);
+      }
+      return;
+    }
     switch (state) {
       case "ATTACK_STANCE":
         actionTimeoutId.current = setTimeout(() => {
@@ -117,7 +134,7 @@ function Monster(props: MonsterProps) {
         }, 1500);
         break;
     }
-  }, [state]);
+  }, [state, isPaused]);
 
   const onDrawHealthBar = useCallback((graphics: Graphics, index: number) => {
     graphics.clear();
@@ -195,6 +212,8 @@ function Monster(props: MonsterProps) {
   }, []);
 
   const animateMonster = useCallback((time: Ticker) => {
+    if (isPaused) return;
+
     if (monsterSpriteRef.current === null || healthBarRef.current === null) return;
 
     const monsterScaleX = monsterSpriteRef.current.scale.x;
@@ -246,7 +265,7 @@ function Monster(props: MonsterProps) {
       attackAnimation();
     }
 
-  }, [health, state]);
+  }, [health, state, isPaused]);
 
 
   useTick(animateMonster);

@@ -1,9 +1,13 @@
 import { useApplication, useTick } from "@pixi/react";
-import { AnimatedSprite, Container, Sprite, Texture, Ticker, type Graphics } from "pixi.js";
+import type { AnyText } from "node_modules/@pixi/ui/lib/utils/helpers/text";
+import { AnimatedSprite, Container, Graphics, Sprite, Text, Texture, Ticker } from "pixi.js";
 import { useCallback, useMemo, useRef } from "react";
+import { usePlayer } from "../hooks/usePlayer";
 
 function DeathScreen() {
   const app = useApplication().app;
+
+  const { restoreHealth } = usePlayer();
 
   const skullRef = useRef<AnimatedSprite | null>(null);
 
@@ -48,6 +52,29 @@ function DeathScreen() {
 
   useTick(animateSkull);
 
+  const tryAgainButtonContainer = useMemo(() => new Graphics()
+    .roundRect(0, 0, 100, 100, 30)
+    .fill({ color: 0xFFFFFF })
+    , []);
+
+  const tryAgainButtonContainerHover = useMemo(() => new Graphics()
+    .roundRect(0, 0, 100, 100, 30)
+    .fill({ color: 0xFFFCCC }), []);
+
+  const tryAgainButtonText = useMemo(() => {
+    return new Text({
+      text: "Try again?",
+      style: {
+        fontFamily: 'Minecraft',
+        fontSize: 48,
+        fontStyle: 'italic',
+        fontWeight: 'bold',
+        fill: { color: "0xFFFFFF" },
+        stroke: { color: '#4a1850', width: 5, join: 'round' },
+      },
+    });
+  }, []);
+
   return (
     <pixiContainer
 
@@ -86,18 +113,16 @@ function DeathScreen() {
       </pixiContainer>
       <pixiContainer
         ref={tryAgainContainerRef}
+        y={app.screen.height / 1.5}
+        x={app.screen.width / 2}
       >
-        <pixiContainer
-          y={app.screen.height / 1.5}
-          x={app.screen.width / 2}
+        <fancyButton
           anchor={0.5}
-        >
-          <fancyButton
-            text={"Try again?"}
-            anchor={0.5}
-            offset={{ x: 100 }}
-          />
-        </pixiContainer>
+          text={tryAgainButtonText}
+          onPointerDown={restoreHealth}
+          defaultView={tryAgainButtonContainer}
+          hoverView={tryAgainButtonContainerHover}
+        />
       </pixiContainer>
 
     </pixiContainer>
@@ -107,14 +132,6 @@ function DeathScreen() {
 //   text={"Try again?"}
 //   style={{
 //
-//     fontFamily: 'Minecraft',
-//     fontSize: 48,
-//     fontStyle: 'italic',
-//     fontWeight: 'bold',
-//     fill: { color: "0xFFFFFF" },
-//     stroke: { color: '#4a1850', width: 5, join: 'round' },
-//     wordWrap: true,
-//     wordWrapWidth: 440,
 //
 //   }}
 //   anchor={{ x: 0.5, y: 0.5 }}
