@@ -8,6 +8,7 @@ import GunHand from "../sprites/GunHand";
 import { Assets } from "pixi.js";
 import { useApplication } from "@pixi/react";
 import Crosshair from "../graphics/Crosshair";
+import minecraftFontUrl from "/Minecraft.ttf";
 import gunHandUrl from "/gunHand.png";
 import heartJson from "/heart/heart.json?url";
 import skullJson from "/skull/skull.json?url";
@@ -54,6 +55,12 @@ function PixelVoidShooterContainer() {
   ammoRef.current = ammo;
 
   useEffect(() => {
+    const fonts = [
+      { alias: "Minecraft", src: minecraftFontUrl }
+    ];
+
+    Assets.addBundle("fonts", fonts);
+
     const assets = [
       { alias: 'gunHand', src: gunHandUrl },
       heartJson,
@@ -67,8 +74,10 @@ function PixelVoidShooterContainer() {
       "https://pixijs.com/assets/bitmap-font/desyrel.xml"
     ];
 
-    Assets.load(assets).then(() => {
-      setAreAssetsLoaded(true);
+    Assets.loadBundle("fonts").then(() => {
+      Assets.load(assets).then(() => {
+        setAreAssetsLoaded(true);
+      });
     });
 
     app.stage.eventMode = "static";

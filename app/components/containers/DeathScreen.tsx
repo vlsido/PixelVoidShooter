@@ -59,7 +59,7 @@ function DeathScreen() {
           text={"YOU DIED"}
           style={{
 
-            fontFamily: 'Arial',
+            fontFamily: 'Minecraft',
             fontSize: 36,
             fontWeight: 'bold',
             fill: { color: "0xFFFFFF" },
@@ -77,7 +77,7 @@ function DeathScreen() {
           text={"Try again?"}
           style={{
 
-            fontFamily: 'Arial',
+            fontFamily: 'Minecraft',
             fontSize: 36,
             fontStyle: 'italic',
             fontWeight: 'bold',

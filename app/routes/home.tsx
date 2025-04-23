@@ -53,7 +53,9 @@ export default function Home() {
       className="h-screen w-screen flex flex-col items-center justify-center bg-[url(/space.jpg)]"
     >
 
-      Pixel Void Shooter?
+      <p>
+        Pixel Void Shooter
+      </p>
       <div
         ref={wrapperRef}
         className="outline-2 rounded-4xl cursor-none overflow-hidden"
