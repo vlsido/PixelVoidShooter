@@ -87,29 +87,39 @@ function DeathScreen() {
       <pixiContainer
         ref={tryAgainContainerRef}
       >
-        <pixiText
-          text={"Try again?"}
-          style={{
-
-            fontFamily: 'Minecraft',
-            fontSize: 48,
-            fontStyle: 'italic',
-            fontWeight: 'bold',
-            fill: { color: "0xFFFFFF" },
-            stroke: { color: '#4a1850', width: 5, join: 'round' },
-            wordWrap: true,
-            wordWrapWidth: 440,
-
-          }}
-          anchor={{ x: 0.5, y: 0.5 }}
-          x={app.screen.width / 2}
+        <pixiContainer
           y={app.screen.height / 1.5}
-
-        />
+          x={app.screen.width / 2}
+          anchor={0.5}
+        >
+          <fancyButton
+            text={"Try again?"}
+            anchor={0.5}
+            offset={{ x: 100 }}
+          />
+        </pixiContainer>
       </pixiContainer>
 
     </pixiContainer>
   );
 }
-
+// <pixiText
+//   text={"Try again?"}
+//   style={{
+//
+//     fontFamily: 'Minecraft',
+//     fontSize: 48,
+//     fontStyle: 'italic',
+//     fontWeight: 'bold',
+//     fill: { color: "0xFFFFFF" },
+//     stroke: { color: '#4a1850', width: 5, join: 'round' },
+//     wordWrap: true,
+//     wordWrapWidth: 440,
+//
+//   }}
+//   anchor={{ x: 0.5, y: 0.5 }}
+//   x={app.screen.width / 2}
+//   y={app.screen.height / 1.5}
+//
+// />
 export default DeathScreen;

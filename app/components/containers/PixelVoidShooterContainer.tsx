@@ -118,7 +118,7 @@ function PixelVoidShooterContainer() {
 
   if (areAssetsLoaded === false) return null;
 
-  if (health === 0) return <DeathScreen />
+  if (health !== 0) return <DeathScreen />
 
   return (
     <pixiContainer
