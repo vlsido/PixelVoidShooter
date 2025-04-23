@@ -12,6 +12,7 @@ import {
   DisplacementFilter,
   Graphics,
   Sprite,
+  Text,
   TilingSprite
 } from "pixi.js";
 import {
@@ -20,6 +21,7 @@ import {
 } from "react";
 import PixelVoidShooterContainer from "~/components/containers/PixelVoidShooterContainer";
 import Storage from "~/components/contexts/Storage";
+import space from "/space.jpg";
 
 export function meta({ }: Route.MetaArgs) {
   return [
@@ -34,6 +36,7 @@ export default function Home() {
     AnimatedSprite,
     TilingSprite,
     CircularProgressBar,
+    Text,
     BitmapText,
     DisplacementFilter,
     AsciiFilter,
@@ -47,8 +50,9 @@ export default function Home() {
 
   return (
     <div
-      className="h-screen w-screen flex flex-col items-center justify-center"
+      className="h-screen w-screen flex flex-col items-center justify-center bg-[url(/space.jpg)]"
     >
+
       Pixel Void Shooter?
       <div
         ref={wrapperRef}
@@ -68,6 +72,7 @@ export default function Home() {
           </Application>
         </Storage>
       </div>
+
     </div>
   );
 }
