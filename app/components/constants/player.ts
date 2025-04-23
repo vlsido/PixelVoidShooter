@@ -1,1 +1,1 @@
-export const PLAYER_HEALTH = 9;
+export const PLAYER_HEALTH = 6;

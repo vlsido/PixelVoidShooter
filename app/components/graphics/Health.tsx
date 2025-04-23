@@ -1,5 +1,13 @@
-import { Graphics, loadTextures, Sprite, Texture } from "pixi.js";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef
+} from "react";
+import {
+  Sprite,
+  Texture
+} from "pixi.js";
 import { usePlayer } from "../hooks/usePlayer";
 import { PLAYER_HEALTH } from "../constants/player";
 import { useApplication } from "@pixi/react";
@@ -22,36 +30,26 @@ function Health() {
   const textures = useMemo(loadTextures, []);
 
   useEffect(() => {
-    const wholeHearts = Math.floor(health / 3);
+    const wholeHearts = Math.floor(health / 2);
 
     healthPointsRefs.current.forEach((ref, index) => {
       if (ref === null) return;
 
-      if (index + 1 <= wholeHearts) {
-        ref.alpha = 1;
+      if (index < wholeHearts) {
         ref.texture = textures[0];
-        return;
-      }
-
-      if (index + 1 >= wholeHearts + 1) {
-
-        ref.alpha = 0;
-        return;
-      };
-
-      if (health % 3 === 2) {
-        ref.alpha = 1;
+      } else if (index === wholeHearts && health % 2 === 1) {
         ref.texture = textures[1];
-      } else if (health % 3 === 1) {
-        ref.alpha = 1;
+      } else {
         ref.texture = textures[2];
+
       }
+
     });
   }, [health]);
 
   return (
     <pixiContainer>
-      {Array.from({ length: PLAYER_HEALTH / 3 }).map((_, index) =>
+      {Array.from({ length: PLAYER_HEALTH / 2 }).map((_, index) =>
         <pixiSprite
           key={index}
           texture={textures[0]}
