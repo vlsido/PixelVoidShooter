@@ -23,6 +23,7 @@ import {
 } from "../constants/monsters";
 import HUD from "./HUD";
 import { useAmmo } from "../hooks/useAmmo";
+import Background from "./Background";
 
 type Monster = {
   textureName: string;
@@ -98,6 +99,7 @@ function PixelVoidShooterContainer() {
 
   return (
     <pixiContainer>
+      <Background />
       {monsters.map((monster, index) =>
         <Monster
           key={index}

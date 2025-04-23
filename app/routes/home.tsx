@@ -61,7 +61,7 @@ export default function Home() {
         <Storage>
           <Application
             resizeTo={wrapperRef}
-            background={"#555555"}
+            background={0x3c35af}
             failIfMajorPerformanceCaveat={true}
           >
             <PixelVoidShooterContainer />
