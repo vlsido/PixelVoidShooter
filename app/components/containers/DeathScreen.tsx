@@ -72,7 +72,7 @@ function DeathScreen() {
         fill: { color: "0xFFFFFF" },
         stroke: { color: '#4a1850', width: 5, join: 'round' },
       },
-    });
+    }).text;
   }, []);
 
   return (
@@ -113,6 +113,7 @@ function DeathScreen() {
       </pixiContainer>
       <pixiContainer
         ref={tryAgainContainerRef}
+        anchor={0.5}
         y={app.screen.height / 1.5}
         x={app.screen.width / 2}
       >
@@ -128,15 +129,4 @@ function DeathScreen() {
     </pixiContainer>
   );
 }
-// <pixiText
-//   text={"Try again?"}
-//   style={{
-//
-//
-//   }}
-//   anchor={{ x: 0.5, y: 0.5 }}
-//   x={app.screen.width / 2}
-//   y={app.screen.height / 1.5}
-//
-// />
 export default DeathScreen;

@@ -11,6 +11,7 @@ import { useApplication } from "@pixi/react";
 import crosshair from "/crosshair.png";
 import minecraftFontUrl from "/Minecraft.ttf";
 import gunHandUrl from "/gunHand.png";
+import pauseUrl from "/pause.png";
 import heartJson from "/heart/heart.json?url";
 import skullJson from "/skull/skull.json?url";
 import slowMonsterJson from "/slowMonster/slowMonster.json?url";
@@ -75,6 +76,7 @@ function PixelVoidShooterContainer() {
     const assets = [
       { alias: 'gunHand', src: gunHandUrl },
       { alias: "crosshair", src: crosshair },
+      { alias: "pause", src: pauseUrl },
       heartJson,
       skullJson,
       slowMonsterJson,
@@ -93,6 +95,7 @@ function PixelVoidShooterContainer() {
     });
 
     app.renderer.events.cursorStyles.default = "crosshair";
+    app.renderer.events.setCursor("crosshair");
 
     app.stage.eventMode = "static";
 
@@ -101,7 +104,6 @@ function PixelVoidShooterContainer() {
 
   useEffect(() => {
     function keyDown(e: KeyboardEvent) {
-      console.log("e.key", e);
       switch (e.key) {
         case "Escape":
           setIsPaused(!isPausedRef.current);
@@ -122,10 +124,6 @@ function PixelVoidShooterContainer() {
     return () => window.removeEventListener("keydown", keyDown);
   }, []);
 
-  useEffect(() => {
-    console.log('asd', isPaused);
-  }, [isPaused]);
-
   const onKillMonster = useCallback(() => {
     const newMonster = Math.round(Math.random()) === 1
       ? SLOW_MONSTER
@@ -136,12 +134,11 @@ function PixelVoidShooterContainer() {
 
   if (areAssetsLoaded === false) return null;
 
-  if (health === 0) return <DeathScreen />
+  if (health <= 0) return <DeathScreen />
 
   return (
     <pixiContainer
-      cursor="default"
-      eventMode="static"
+      cursor="crosshair"
     >
       <Background />
       {monsters.map((monster, index) =>
