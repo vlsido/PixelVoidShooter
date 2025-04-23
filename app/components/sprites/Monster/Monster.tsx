@@ -19,6 +19,7 @@ import {
 import { useAmmo } from "~/components/hooks/useAmmo";
 import { FLYING_MONSTER_LEFT_EYE_CENTER, FLYING_MONSTER_RIGHT_EYE_CENTER, FLYING_MONSTER_TEXTURE_NAME, SLOW_MONSTER_TEXTURE_NAME } from "~/components/constants/monsters";
 import { type Position } from "~/components/types/common";
+import { usePlayer } from "~/components/hooks/usePlayer";
 
 export interface MonsterProps {
   textureName: string;
@@ -31,6 +32,11 @@ type MonsterState = "GO" | "ATTACK_STANCE" | "ATTACK";
 
 function Monster(props: MonsterProps) {
   const app = useApplication().app;
+
+  const {
+    health: playerHealth,
+    decrementHealth
+  } = usePlayer();
 
   const {
     ammo,
@@ -51,6 +57,7 @@ function Monster(props: MonsterProps) {
 
   const [health, setHealth] = useState<number>(props.health);
 
+  // PERF: likely not the right way to do that, as it does not unload previous textures
   const loadTextures = useCallback(() => {
     let textureState = "";
     switch (state) {
@@ -95,6 +102,7 @@ function Monster(props: MonsterProps) {
         }, 3000);
         break;
       case "ATTACK":
+        decrementHealth(playerHealth);
         setTimeout(() => {
           laserGraphicsRef.current?.clear();
           laserLinePositionRef.current = { x: 0, y: 0 };

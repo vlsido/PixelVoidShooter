@@ -3,10 +3,11 @@ import {
   type AmmoProps,
   type GunProps
 } from "../types/player";
+import { PLAYER_HEALTH } from "../constants/player";
 
 // export const playerAtom = atom<PlayerProps>();
 
-export const healthAtom = atom<number>(5);
+export const healthAtom = atom<number>(PLAYER_HEALTH);
 
 export const ammoAtom = atom<AmmoProps>({
   totalBullets: 13,

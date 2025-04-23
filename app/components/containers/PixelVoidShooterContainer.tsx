@@ -36,7 +36,7 @@ function PixelVoidShooterContainer() {
   const [areAssetsLoaded, setAreAssetsLoaded] = useState<boolean>(false);
 
   const [monsters, setMonsters] = useState<Monster[]>([
-    SLOW_MONSTER,
+    // SLOW_MONSTER,
     FLYING_MONSTER
   ]);
 

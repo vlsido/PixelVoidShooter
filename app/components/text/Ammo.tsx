@@ -59,6 +59,7 @@ function Ammo() {
         ref={bitmapRef}
         text="13/13"
         x={app.screen.width * 0.06}
+        y={app.screen.height - 50}
       />
     </pixiContainer>
   );
