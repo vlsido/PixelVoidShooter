@@ -51,6 +51,10 @@ function Monster(props: MonsterProps) {
 
   const laserGraphicsRef = useRef<Graphics | null>(null);
 
+  const laserLinePositionRef = useRef<Position>({ x: 0, y: 0 });
+
+  const actionTimeoutId = useRef<NodeJS.Timeout | null>(null);
+
   const x = useMemo(() => Math.random() * (app.screen.width * 0.85 - app.screen.width * 0.15) + app.screen.width * 0.15, []);
 
   const [state, setState] = useState<MonsterState>("GO");
@@ -87,23 +91,26 @@ function Monster(props: MonsterProps) {
 
   useEffect(() => {
     if (health <= 0) {
+      if (actionTimeoutId.current !== null) {
+        clearTimeout(actionTimeoutId.current);
+        actionTimeoutId.current = null;
+      }
       monsterRef.current?.removeFromParent();
       props.onKill();
     }
   }, [health]);
 
-  const laserLinePositionRef = useRef<Position>({ x: 0, y: 0 });
 
   useEffect(() => {
     switch (state) {
       case "ATTACK_STANCE":
-        setTimeout(() => {
+        actionTimeoutId.current = setTimeout(() => {
           setState("ATTACK");
         }, 3000);
         break;
       case "ATTACK":
         decrementHealth(playerHealth);
-        setTimeout(() => {
+        actionTimeoutId.current = setTimeout(() => {
           laserGraphicsRef.current?.clear();
           laserLinePositionRef.current = { x: 0, y: 0 };
           setState("ATTACK_STANCE");

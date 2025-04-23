@@ -10,6 +10,7 @@ import { useApplication } from "@pixi/react";
 import Crosshair from "../graphics/Crosshair";
 import gunHandUrl from "/gunHand.png";
 import heartJson from "/heart/heart.json?url";
+import skullJson from "/skull/skull.json?url";
 import slowMonsterJson from "/slowMonster/slowMonster.json?url";
 import slowMonsterAttackStanceJson from "/slowMonsterAttackStance/slowMonsterAttackStance.json?url";
 import slowMonsterAttackJson from "/slowMonsterAttack/slowMonsterAttack.json?url";
@@ -24,6 +25,9 @@ import {
 import HUD from "./HUD";
 import { useAmmo } from "../hooks/useAmmo";
 import Background from "./Background";
+import DeathScreen from "./DeathScreen";
+import { usePlayer } from "../hooks/usePlayer";
+import Menu from "./Menu";
 
 type Monster = {
   textureName: string;
@@ -41,6 +45,8 @@ function PixelVoidShooterContainer() {
     FLYING_MONSTER
   ]);
 
+  const { health } = usePlayer();
+
   const { ammo, reloadAmmo } = useAmmo();
 
   const ammoRef = useRef(ammo);
@@ -51,6 +57,7 @@ function PixelVoidShooterContainer() {
     const assets = [
       { alias: 'gunHand', src: gunHandUrl },
       heartJson,
+      skullJson,
       slowMonsterJson,
       slowMonsterAttackStanceJson,
       slowMonsterAttackJson,
@@ -97,6 +104,8 @@ function PixelVoidShooterContainer() {
 
   if (areAssetsLoaded === false) return null;
 
+  if (health === 0) return <DeathScreen />
+
   return (
     <pixiContainer>
       <Background />
@@ -112,6 +121,7 @@ function PixelVoidShooterContainer() {
       <GunHand />
       <Crosshair />
       <HUD />
+      <Menu />
     </pixiContainer>
   );
 }
