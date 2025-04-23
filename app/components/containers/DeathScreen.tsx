@@ -84,15 +84,9 @@ function DeathScreen() {
 
         />
       </pixiContainer>
-      <fancyButton
-        text={"Try again?"}
-        anchor={0.5}
-        offset={{ x: app.screen.width / 2, y: 100 }}
-      />
       <pixiContainer
         ref={tryAgainContainerRef}
       >
-
         <pixiText
           text={"Try again?"}
           style={{

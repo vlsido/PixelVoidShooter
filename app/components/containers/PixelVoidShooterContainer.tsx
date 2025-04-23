@@ -122,8 +122,7 @@ function PixelVoidShooterContainer() {
 
   return (
     <pixiContainer
-      cursor="hover"
-      eventMode="dynamic"
+      cursor="default"
     >
       <Background />
       {monsters.map((monster, index) =>
