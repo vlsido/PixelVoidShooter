@@ -7,7 +7,7 @@ import {
 import GunHand from "../sprites/GunHand";
 import { Assets } from "pixi.js";
 import { useApplication } from "@pixi/react";
-import Crosshair from "../graphics/Crosshair";
+import crosshair from "/crosshair.png";
 import minecraftFontUrl from "/Minecraft.ttf";
 import gunHandUrl from "/gunHand.png";
 import heartJson from "/heart/heart.json?url";
@@ -55,6 +55,7 @@ function PixelVoidShooterContainer() {
   ammoRef.current = ammo;
 
   useEffect(() => {
+
     const fonts = [
       { alias: "Minecraft", src: minecraftFontUrl }
     ];
@@ -63,6 +64,7 @@ function PixelVoidShooterContainer() {
 
     const assets = [
       { alias: 'gunHand', src: gunHandUrl },
+      { alias: "crosshair", src: crosshair },
       heartJson,
       skullJson,
       slowMonsterJson,
@@ -79,6 +81,9 @@ function PixelVoidShooterContainer() {
         setAreAssetsLoaded(true);
       });
     });
+
+    app.renderer.events.cursorStyles.default = "crosshair";
+
 
     app.stage.eventMode = "static";
 
@@ -116,7 +121,10 @@ function PixelVoidShooterContainer() {
   if (health === 0) return <DeathScreen />
 
   return (
-    <pixiContainer>
+    <pixiContainer
+      cursor="hover"
+      eventMode="dynamic"
+    >
       <Background />
       {monsters.map((monster, index) =>
         <Monster
@@ -128,7 +136,6 @@ function PixelVoidShooterContainer() {
         />
       )}
       <GunHand />
-      <Crosshair />
       <HUD />
       <Menu />
     </pixiContainer>

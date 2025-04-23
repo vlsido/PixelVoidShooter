@@ -1,5 +1,5 @@
 import { useApplication, useTick } from "@pixi/react";
-import { AnimatedSprite, Sprite, Texture, Ticker, type Graphics } from "pixi.js";
+import { AnimatedSprite, Container, Sprite, Texture, Ticker, type Graphics } from "pixi.js";
 import { useCallback, useMemo, useRef } from "react";
 
 function DeathScreen() {
@@ -19,11 +19,21 @@ function DeathScreen() {
     return textures;
   }, []);
 
+  const tryAgainContainerRef = useRef<Container | null>(null);
+
   const onDrawDeathScreenGraphics = useCallback((graphics: Graphics) => {
     graphics
       .rect(0, 0, app.screen.width, app.screen.height)
       .fill({ color: 0x555555 });
 
+  }, []);
+
+  const onDrawTryAgainButtonGraphics = useCallback((graphics: Graphics) => {
+
+    if (tryAgainContainerRef.current === null) return;
+    graphics
+      .rect(tryAgainContainerRef.current.x, app.screen.height / 2, 100, 100)
+      .fill({ color: 0x000000 });
   }, []);
 
   const animateSkull = useCallback((time: Ticker) => {
@@ -43,6 +53,7 @@ function DeathScreen() {
 
     >
       <pixiGraphics
+        pivot={0.5}
         draw={onDrawDeathScreenGraphics}
       />
       <pixiAnimatedSprite
@@ -50,8 +61,9 @@ function DeathScreen() {
         ref={skullRef}
         anchor={0.5}
         autoPlay={true}
+        scale={1.5}
         x={app.screen.width / 2}
-        y={app.screen.height / 4}
+        y={app.screen.height / 3}
         animationSpeed={0.05}
       />
       <pixiContainer>
@@ -60,7 +72,7 @@ function DeathScreen() {
           style={{
 
             fontFamily: 'Minecraft',
-            fontSize: 36,
+            fontSize: 48,
             fontWeight: 'bold',
             fill: { color: "0xFFFFFF" },
             stroke: { color: '#4a1850', width: 5, join: 'round' },
@@ -72,13 +84,21 @@ function DeathScreen() {
 
         />
       </pixiContainer>
-      <pixiContainer>
+      <fancyButton
+        text={"Try again?"}
+        anchor={0.5}
+        offset={{ x: app.screen.width / 2, y: 100 }}
+      />
+      <pixiContainer
+        ref={tryAgainContainerRef}
+      >
+
         <pixiText
           text={"Try again?"}
           style={{
 
             fontFamily: 'Minecraft',
-            fontSize: 36,
+            fontSize: 48,
             fontStyle: 'italic',
             fontWeight: 'bold',
             fill: { color: "0xFFFFFF" },
@@ -89,7 +109,7 @@ function DeathScreen() {
           }}
           anchor={{ x: 0.5, y: 0.5 }}
           x={app.screen.width / 2}
-          y={app.screen.height / 2}
+          y={app.screen.height / 1.5}
 
         />
       </pixiContainer>

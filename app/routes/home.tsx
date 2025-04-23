@@ -1,4 +1,7 @@
-import { CircularProgressBar } from "@pixi/ui";
+import {
+  CircularProgressBar,
+  FancyButton
+} from "@pixi/ui";
 import type { Route } from "./+types/home";
 import {
   Application,
@@ -21,7 +24,6 @@ import {
 } from "react";
 import PixelVoidShooterContainer from "~/components/containers/PixelVoidShooterContainer";
 import Storage from "~/components/contexts/Storage";
-import space from "/space.jpg";
 
 export function meta({ }: Route.MetaArgs) {
   return [
@@ -35,6 +37,7 @@ export default function Home() {
     Sprite,
     AnimatedSprite,
     TilingSprite,
+    FancyButton,
     CircularProgressBar,
     Text,
     BitmapText,

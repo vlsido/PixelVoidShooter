@@ -286,7 +286,8 @@ function Monster(props: MonsterProps) {
       <pixiAnimatedSprite
         ref={monsterSpriteRef}
         textures={textures}
-        eventMode="static"
+        cursor={"hover"}
+        eventMode="dynamic"
         onPointerDown={dealDamage}
         scale={1}
         animationSpeed={0.1}
