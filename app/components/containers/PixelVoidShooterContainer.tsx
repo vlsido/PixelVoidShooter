@@ -35,7 +35,7 @@ import { useAtom } from "jotai";
 import { isPausedAtom } from "../atoms/gameAtoms";
 import { type AmmoProps } from "../types/player";
 
-type Monster = {
+type TMonster = {
   textureName: string;
   health: number;
   speed: number;
@@ -46,7 +46,7 @@ function PixelVoidShooterContainer() {
 
   const [areAssetsLoaded, setAreAssetsLoaded] = useState<boolean>(false);
 
-  const [monsters, setMonsters] = useState<Monster[]>([
+  const [monsters, setMonsters] = useState<TMonster[]>([
     SLOW_MONSTER,
     FLYING_MONSTER
   ]);

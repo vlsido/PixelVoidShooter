@@ -17,7 +17,12 @@ import {
   Ticker
 } from "pixi.js";
 import { useAmmo } from "~/components/hooks/useAmmo";
-import { FLYING_MONSTER_LEFT_EYE_CENTER, FLYING_MONSTER_RIGHT_EYE_CENTER, FLYING_MONSTER_TEXTURE_NAME, SLOW_MONSTER_TEXTURE_NAME } from "~/components/constants/monsters";
+import {
+  FLYING_MONSTER_LEFT_EYE_CENTER,
+  FLYING_MONSTER_RIGHT_EYE_CENTER,
+  FLYING_MONSTER_TEXTURE_NAME,
+  SLOW_MONSTER_TEXTURE_NAME
+} from "~/components/constants/monsters";
 import { type Position } from "~/components/types/common";
 import { usePlayer } from "~/components/hooks/usePlayer";
 import { useAtomValue } from "jotai";
@@ -112,7 +117,6 @@ function Monster(props: MonsterProps) {
   }, []);
 
   const dealDamage = useCallback(() => {
-    console.log('reload', reloadProgress);
     if (ammo.currentBullets > 0 && reloadProgress === 0) {
       decrementAmmo(ammo);
       setHealth(health - 1);
