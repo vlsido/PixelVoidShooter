@@ -6,7 +6,7 @@ import {
   useState
 } from "react";
 import GunHand from "../sprites/GunHand";
-import { Assets } from "pixi.js";
+import { Assets, Container } from "pixi.js";
 import { useApplication } from "@pixi/react";
 import crosshair from "/crosshair.png";
 import minecraftFontUrl from "/Minecraft.ttf";
@@ -110,11 +110,15 @@ function PixelVoidShooterContainer() {
           break;
 
         case "R":
-          reloadAmmo(ammoRef.current);
+          if (isPausedRef.current === false) {
+            reloadAmmo(ammoRef.current);
+          }
           break;
 
         case "r":
-          reloadAmmo(ammoRef.current);
+          if (isPausedRef.current === false) {
+            reloadAmmo(ammoRef.current);
+          }
           break;
       }
     };
@@ -140,18 +144,20 @@ function PixelVoidShooterContainer() {
     <pixiContainer
       cursor="crosshair"
     >
-      <Background />
-      {monsters.map((monster, index) =>
-        <Monster
-          key={index}
-          textureName={monster.textureName}
-          health={monster.health}
-          speed={monster.speed}
-          onKill={onKillMonster}
-        />
-      )}
-      <GunHand />
-      <HUD />
+      <pixiContainer>
+        <Background />
+        {monsters.map((monster, index) =>
+          <Monster
+            key={index}
+            textureName={monster.textureName}
+            health={monster.health}
+            speed={monster.speed}
+            onKill={onKillMonster}
+          />
+        )}
+        <GunHand />
+        <HUD />
+      </pixiContainer>
       <Menu />
     </pixiContainer>
   );

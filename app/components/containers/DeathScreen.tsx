@@ -72,7 +72,7 @@ function DeathScreen() {
         fill: { color: "0xFFFFFF" },
         stroke: { color: '#4a1850', width: 5, join: 'round' },
       },
-    }).text;
+    });
   }, []);
 
   return (
@@ -88,7 +88,7 @@ function DeathScreen() {
         ref={skullRef}
         anchor={0.5}
         autoPlay={true}
-        scale={1.5}
+        scale={2.5}
         x={app.screen.width / 2}
         y={app.screen.height / 3}
         animationSpeed={0.05}
@@ -97,7 +97,6 @@ function DeathScreen() {
         <pixiText
           text={"YOU DIED"}
           style={{
-
             fontFamily: 'Minecraft',
             fontSize: 48,
             fontWeight: 'bold',

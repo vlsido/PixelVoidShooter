@@ -16,6 +16,8 @@ function Menu() {
       .fill({ color: 0x212221, alpha: 0.5 });
   }, []);
 
+  console.log("isPaused", isPaused);
+
   if (isPaused === false) return null;
 
   return (

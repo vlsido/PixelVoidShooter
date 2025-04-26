@@ -30,8 +30,6 @@ export interface MonsterProps {
   onKill: () => void;
 }
 
-
-
 type MonsterState = "GO" | "ATTACK_STANCE" | "ATTACK";
 
 function Monster(props: MonsterProps) {
@@ -59,7 +57,9 @@ function Monster(props: MonsterProps) {
 
   const laserLinePositionRef = useRef<Position>({ x: 0, y: 0 });
 
-  const actionTimeoutId = useRef<NodeJS.Timeout | null>(null);
+  const animationTimerRef = useRef<number>(0);
+
+  const hasMadeDamageToPlayer = useRef<boolean>(false);
 
   const x = useMemo(() => Math.random() * (app.screen.width * 0.85 - app.screen.width * 0.15) + app.screen.width * 0.15, []);
 
@@ -68,6 +68,7 @@ function Monster(props: MonsterProps) {
   const [health, setHealth] = useState<number>(props.health);
 
   // PERF: likely not the right way to do that, as it does not unload previous textures
+  // NOTE: however this might be handled by Texture Garbage Collector
   const loadTextures = useCallback(() => {
     let textureState = "";
     switch (state) {
@@ -92,49 +93,15 @@ function Monster(props: MonsterProps) {
   const textures = useMemo(loadTextures, [state]);
 
   useEffect(() => {
-    if (isPaused) {
-      monsterSpriteRef.current?.stop();
-      return;
-    }
-
     monsterSpriteRef.current?.play();
-  }, [textures, isPaused]);
+  }, [textures]);
 
   useEffect(() => {
     if (health <= 0) {
-      if (actionTimeoutId.current !== null) {
-        clearTimeout(actionTimeoutId.current);
-        actionTimeoutId.current = null;
-      }
       monsterRef.current?.removeFromParent();
       props.onKill();
     }
   }, [health]);
-
-
-  useEffect(() => {
-    if (isPaused) {
-      if (actionTimeoutId.current !== null) {
-        clearTimeout(actionTimeoutId.current);
-      }
-      return;
-    }
-    switch (state) {
-      case "ATTACK_STANCE":
-        actionTimeoutId.current = setTimeout(() => {
-          setState("ATTACK");
-        }, 3000);
-        break;
-      case "ATTACK":
-        decrementHealth(playerHealth);
-        actionTimeoutId.current = setTimeout(() => {
-          laserGraphicsRef.current?.clear();
-          laserLinePositionRef.current = { x: 0, y: 0 };
-          setState("ATTACK_STANCE");
-        }, 1500);
-        break;
-    }
-  }, [state, isPaused]);
 
   const onDrawHealthBar = useCallback((graphics: Graphics, index: number) => {
     graphics.clear();
@@ -212,9 +179,18 @@ function Monster(props: MonsterProps) {
   }, []);
 
   const animateMonster = useCallback((time: Ticker) => {
-    if (isPaused) return;
-
     if (monsterSpriteRef.current === null || healthBarRef.current === null) return;
+
+    if (isPaused === true) {
+      if (monsterSpriteRef.current.playing === true) {
+        monsterSpriteRef.current.stop();
+      }
+      return;
+    };
+
+    if (monsterSpriteRef.current.playing === false) {
+      monsterSpriteRef.current.play();
+    }
 
     const monsterScaleX = monsterSpriteRef.current.scale.x;
     const posX = monsterSpriteRef.current.x;
@@ -261,11 +237,35 @@ function Monster(props: MonsterProps) {
     healthBarRef.current.y = monsterSpriteRef.current.y - 20;
 
 
-    if (state === "ATTACK") {
-      attackAnimation();
+    switch (state) {
+      case "ATTACK":
+        attackAnimation();
+        animationTimerRef.current = animationTimerRef.current + dx;
+        if (animationTimerRef.current > 45 && hasMadeDamageToPlayer.current === false) {
+          hasMadeDamageToPlayer.current = true;
+          decrementHealth(playerHealth);
+        } else if (animationTimerRef.current > 90) {
+          laserGraphicsRef.current?.clear();
+          laserLinePositionRef.current = { x: 0, y: 0 };
+          animationTimerRef.current = 0;
+          setState("ATTACK_STANCE");
+        }
+        break;
+      case "ATTACK_STANCE":
+        animationTimerRef.current = animationTimerRef.current + dx;
+        if (animationTimerRef.current > 180) {
+          hasMadeDamageToPlayer.current = false;
+          animationTimerRef.current = 0;
+          setState("ATTACK");
+        }
     }
 
-  }, [health, state, isPaused]);
+  }, [
+    health,
+    // Function updates on state, no need to add playerHealth as a dep
+    state,
+    isPaused
+  ]);
 
 
   useTick(animateMonster);

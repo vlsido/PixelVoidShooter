@@ -31,6 +31,7 @@ function PlayerContextProvider({ children }: { children: React.ReactNode }) {
   const reloadIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const decrementHealth = useCallback((health: number) => {
+    console.log(health);
     if (health === 0) return;
 
     setHealth(health - 1);
