@@ -5,47 +5,21 @@ import { ammoAtom, healthAtom, reloadProgressAtom } from "../atoms/playerAtoms";
 import { PLAYER_HEALTH } from "../constants/player";
 
 interface PlayerContextProps {
-  decrementHealth: (health: number) => void;
-  incrementHealth: (health: number) => void;
-  restoreHealth: () => void;
   decrementAmmo: (ammo: AmmoProps) => void;
   reloadAmmo: (ammo: AmmoProps) => void;
 }
 
 export const PlayerContext = createContext<PlayerContextProps>({
-  decrementHealth: (health: number) => { },
-  incrementHealth: (health: number) => { },
-  restoreHealth: () => { },
   decrementAmmo: (ammo: AmmoProps) => { },
   reloadAmmo: (ammo: AmmoProps) => { },
 });
 
 function PlayerContextProvider({ children }: { children: React.ReactNode }) {
-
-  const setHealth = useSetAtom(healthAtom);
-
   const setAmmo = useSetAtom(ammoAtom);
 
   const setReloadProgress = useSetAtom(reloadProgressAtom);
 
   const reloadIntervalRef = useRef<NodeJS.Timeout | null>(null);
-
-  const decrementHealth = useCallback((health: number) => {
-    console.log(health);
-    if (health === 0) return;
-
-    setHealth(health - 1);
-  }, []);
-
-  const incrementHealth = useCallback((health: number) => {
-    if (health === PLAYER_HEALTH) return;
-
-    setHealth(health + 1);
-  }, []);
-
-  const restoreHealth = useCallback(() => {
-    setHealth(PLAYER_HEALTH);
-  }, []);
 
   const decrementAmmo = useCallback((ammo: AmmoProps) => {
     if (ammo.currentBullets === 0) return;
@@ -80,9 +54,6 @@ function PlayerContextProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const value = {
-    decrementHealth,
-    incrementHealth,
-    restoreHealth,
     decrementAmmo,
     reloadAmmo,
   }

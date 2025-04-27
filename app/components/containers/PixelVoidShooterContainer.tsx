@@ -1,8 +1,8 @@
 import {
   useCallback,
   useEffect,
+  useMemo,
   useRef,
-  useState
 } from "react";
 import GunHand from "../sprites/GunHand";
 import { Assets } from "pixi.js";
@@ -19,44 +19,24 @@ import slowMonsterAttackJson from "/slowMonsterAttack/slowMonsterAttack.json?url
 import flyingMonsterJson from "/flyingMonster/flyingMonster.json?url";
 import flyingMonsterAttackStanceJson from "/flyingMonsterAttackStance/flyingMonsterAttackStance.json?url";
 import flyingMonsterAttackJson from "/flyingMonsterAttack/flyingMonsterAttack.json?url";
-import Monster from "../sprites/Monster/Monster";
-import {
-  FLYING_MONSTER,
-  FLYING_MONSTER_SCORE,
-  FLYING_MONSTER_TEXTURE_NAME,
-  SLOW_MONSTER,
-  SLOW_MONSTER_SCORE,
-  SLOW_MONSTER_TEXTURE_NAME
-} from "../constants/monsters";
 import HUD from "./HUD";
 import { useAmmo } from "../hooks/useAmmo";
 import Background from "./Background";
 import DeathScreen from "./DeathScreen";
-import { usePlayer } from "../hooks/usePlayer";
 import Menu from "./Menu";
-import { useAtom, useSetAtom } from "jotai";
-import { isPausedAtom, scoreAtom } from "../atoms/gameAtoms";
+import { atom, useAtom, useAtomValue } from "jotai";
+import { isPausedAtom } from "../atoms/gameAtoms";
 import { type AmmoProps } from "../types/player";
+import MonstersContainer from "./MonstersContainer";
+import { healthAtom } from "../atoms/playerAtoms";
 
-type TMonster = {
-  textureName: string;
-  health: number;
-  speed: number;
-}
 
 function PixelVoidShooterContainer() {
   const app = useApplication().app;
 
-  const [areAssetsLoaded, setAreAssetsLoaded] = useState<boolean>(false);
+  const [areAssetsLoaded, setAreAssetsLoaded] = useAtom<boolean>(useMemo(() => atom<boolean>(false), []));
 
-  const [monsters, setMonsters] = useState<TMonster[]>([
-    SLOW_MONSTER,
-    FLYING_MONSTER
-  ]);
-
-  const { health } = usePlayer();
-
-  const dispatchScore = useSetAtom(scoreAtom);
+  const health = useAtomValue<number>(healthAtom);
 
   const [isPaused, setIsPaused] = useAtom<boolean>(isPausedAtom);
 
@@ -70,8 +50,27 @@ function PixelVoidShooterContainer() {
 
   ammoRef.current = ammo;
 
-  useEffect(() => {
+  const keyDown = useCallback((e: KeyboardEvent) => {
+    switch (e.key) {
+      case "Escape":
+        setIsPaused(!isPausedRef.current);
+        break;
 
+      case "R":
+        if (isPausedRef.current === false) {
+          reloadAmmo(ammoRef.current);
+        }
+        break;
+
+      case "r":
+        if (isPausedRef.current === false) {
+          reloadAmmo(ammoRef.current);
+        }
+        break;
+    }
+  }, []);
+
+  useEffect(() => {
     const fonts = [
       { alias: "Minecraft", src: minecraftFontUrl }
     ];
@@ -105,50 +104,11 @@ function PixelVoidShooterContainer() {
     app.stage.eventMode = "static";
 
     app.stage.hitArea = app.screen;
-  }, []);
-
-  useEffect(() => {
-    function keyDown(e: KeyboardEvent) {
-      switch (e.key) {
-        case "Escape":
-          setIsPaused(!isPausedRef.current);
-          break;
-
-        case "R":
-          if (isPausedRef.current === false) {
-            reloadAmmo(ammoRef.current);
-          }
-          break;
-
-        case "r":
-          if (isPausedRef.current === false) {
-            reloadAmmo(ammoRef.current);
-          }
-          break;
-      }
-    };
 
     window.addEventListener("keydown", keyDown);
 
     return () => window.removeEventListener("keydown", keyDown);
   }, []);
-
-  const onKillMonster = useCallback((textureName: string) => {
-    switch (textureName) {
-      case SLOW_MONSTER_TEXTURE_NAME:
-        dispatchScore({ type: "add", payload: SLOW_MONSTER_SCORE });
-        break;
-      case FLYING_MONSTER_TEXTURE_NAME:
-        dispatchScore({ type: "add", payload: FLYING_MONSTER_SCORE });
-        break;
-    }
-
-    const newMonster = Math.round(Math.random()) === 1
-      ? SLOW_MONSTER
-      : FLYING_MONSTER;
-
-    setMonsters([...monsters, newMonster]);
-  }, [monsters]);
 
   if (areAssetsLoaded === false) return null;
 
@@ -160,15 +120,7 @@ function PixelVoidShooterContainer() {
     >
       <pixiContainer>
         <Background />
-        {monsters.map((monster, index) =>
-          <Monster
-            key={index}
-            textureName={monster.textureName}
-            health={monster.health}
-            speed={monster.speed}
-            onKill={onKillMonster}
-          />
-        )}
+        <MonstersContainer />
         <GunHand />
         <HUD />
       </pixiContainer>

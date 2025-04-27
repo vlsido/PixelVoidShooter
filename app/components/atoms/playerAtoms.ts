@@ -7,8 +7,32 @@ import { PLAYER_HEALTH } from "../constants/player";
 
 // export const playerAtom = atom<PlayerProps>();
 
-export const healthAtom = atom<number>(PLAYER_HEALTH);
+export const primitiveHealthAtom = atom<number>(PLAYER_HEALTH);
 
+type HealthAction = { type: "add" | "remove" | "restore"; payload?: number };
+
+export const healthAtom = atom<number, [HealthAction], void>(
+  (get) => get(primitiveHealthAtom),
+  (get, set, action: { type: string; payload?: number }) => {
+    const currentHealth = get(primitiveHealthAtom);
+    switch (action.type) {
+      case "add":
+        if (action.payload === undefined) return;
+        set(primitiveHealthAtom, currentHealth + action.payload);
+        break;
+      case "remove":
+        if (action.payload === undefined) return;
+        set(primitiveHealthAtom, currentHealth - action.payload);
+        break;
+      case "restore":
+        set(primitiveHealthAtom, PLAYER_HEALTH);
+        break;
+
+      default:
+        break;
+    }
+  }
+);
 export const ammoAtom = atom<AmmoProps>({
   totalBullets: 13,
   currentBullets: 13,

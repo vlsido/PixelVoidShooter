@@ -3,30 +3,29 @@ import {
   useEffect,
   useMemo,
   useRef,
-  useState
 } from "react";
 import {
   useApplication,
-  useTick
 } from "@pixi/react";
 import {
   AnimatedSprite,
   Container,
   Graphics,
-  Texture,
   Ticker
 } from "pixi.js";
 import { useAmmo } from "~/components/hooks/useAmmo";
 import {
-  FLYING_MONSTER_LEFT_EYE_CENTER,
-  FLYING_MONSTER_RIGHT_EYE_CENTER,
   FLYING_MONSTER_TEXTURE_NAME,
   SLOW_MONSTER_TEXTURE_NAME
 } from "~/components/constants/monsters";
-import { type Position } from "~/components/types/common";
-import { usePlayer } from "~/components/hooks/usePlayer";
-import { useAtom, useAtomValue } from "jotai";
-import { isPausedAtom, scoreAtom } from "~/components/atoms/gameAtoms";
+import {
+  atom,
+  useAtom,
+  useAtomValue
+} from "jotai";
+import { isPausedAtom } from "~/components/atoms/gameAtoms";
+import SlowMonster from "./SlowMonster";
+import FlyingMonster from "./FlyingMonster";
 
 export interface MonsterProps {
   textureName: string;
@@ -35,15 +34,8 @@ export interface MonsterProps {
   onKill: (textureName: string) => void;
 }
 
-type MonsterState = "GO" | "ATTACK_STANCE" | "ATTACK";
-
 function Monster(props: MonsterProps) {
   const app = useApplication().app;
-
-  const {
-    health: playerHealth,
-    decrementHealth
-  } = usePlayer();
 
   const {
     ammo,
@@ -53,54 +45,26 @@ function Monster(props: MonsterProps) {
 
   const isPaused = useAtomValue<boolean>(isPausedAtom);
 
-  const monsterRef = useRef<Container | null>(null);
+  const monsterContainerRef = useRef<Container | null>(null);
+
   const monsterSpriteRef = useRef<AnimatedSprite | null>(null);
-  const healthBarRef = useRef<Container | null>(null);
-  const healthPointsRefs = useRef<(Graphics | null)[]>([]);
 
-  const laserGraphicsRef = useRef<Graphics | null>(null);
+  const healthContainerRef = useRef<Container | null>(null);
 
-  const laserLinePositionRef = useRef<Position>({ x: 0, y: 0 });
+  const healthPointsGraphicsRefs = useRef<(Graphics | null)[]>([]);
 
   const animationTimerRef = useRef<number>(0);
 
-  const hasMadeDamageToPlayer = useRef<boolean>(false);
+  const hasMadeDamageToPlayerRef = useRef<boolean>(false);
 
-  const x = useMemo(() => Math.random() * (app.screen.width * 0.85 - app.screen.width * 0.15) + app.screen.width * 0.15, []);
-
-
-  const [state, setState] = useState<MonsterState>("GO");
-
-  const [health, setHealth] = useState<number>(props.health);
-
-  // PERF: likely not the right way to do that, as it does not unload previous textures
-  // NOTE: however this might be handled by Texture Garbage Collector
-  const loadTextures = useCallback(() => {
-    let textureState = "";
-    switch (state) {
-      case "GO":
-        textureState = "";
-        break;
-      case "ATTACK_STANCE":
-        textureState = "AttackStance";
-        break;
-      case "ATTACK":
-        textureState = "Attack";
-    }
-    const frames = [];
-
-    for (let frameIndex = 0; frameIndex < 3; frameIndex++) {
-      frames.push(Texture.from(`${props.textureName}${textureState}${frameIndex}.png`));
-    }
-
-    return frames;
-  }, [state]);
-
-  const textures = useMemo(loadTextures, [state]);
+  const [
+    health,
+    setHealth
+  ] = useAtom<number>(useMemo(() => atom<number>(props.health), []));
 
   useEffect(() => {
     if (health <= 0) {
-      monsterRef.current?.removeFromParent();
+      monsterContainerRef.current?.removeFromParent();
       props.onKill(props.textureName);
     }
   }, [health]);
@@ -113,74 +77,15 @@ function Monster(props: MonsterProps) {
       .stroke({ color: "black", width: 2 });
   }, []);
 
-  const dealDamage = useCallback(() => {
+  const takeDamage = useCallback(() => {
     if (ammo.currentBullets > 0 && reloadProgress === 0) {
       decrementAmmo(ammo);
       setHealth(health - 1);
     }
   }, [ammo, health, reloadProgress]);
 
-
-  const attackAnimation = useCallback(() => {
-    switch (props.textureName) {
-      case SLOW_MONSTER_TEXTURE_NAME:
-        break;
-      case FLYING_MONSTER_TEXTURE_NAME:
-        if (
-          laserGraphicsRef.current == null
-          || monsterSpriteRef.current == null
-        ) return;
-
-        laserGraphicsRef.current.clear();
-
-        const laserWidth = 10;
-
-        const startPosition: Position = {
-          x: monsterSpriteRef.current.x + (FLYING_MONSTER_LEFT_EYE_CENTER.x * monsterSpriteRef.current.scale.x) - laserWidth / 2,
-          y: monsterSpriteRef.current.y + (FLYING_MONSTER_LEFT_EYE_CENTER.y * monsterSpriteRef.current.scale.x) - laserWidth / 2
-        };
-
-        if (
-          laserLinePositionRef.current.x === 0
-          && laserLinePositionRef.current.y === 0
-        ) {
-          laserLinePositionRef.current = {
-            x: startPosition.x,
-            y: startPosition.y
-          }
-        }
-
-        if (laserLinePositionRef.current.x < app.screen.width / 2) {
-          laserLinePositionRef.current.x = laserLinePositionRef.current.x + (app.screen.width / 2 - startPosition.x) * 0.2;
-        }
-
-        if (laserLinePositionRef.current.y < app.screen.height) {
-          laserLinePositionRef.current.y = laserLinePositionRef.current.y + (app.screen.height - startPosition.y) * 0.2;
-        }
-
-        laserGraphicsRef.current
-          .moveTo(
-            startPosition.x,
-            startPosition.y)
-          .lineTo(
-            laserLinePositionRef.current.x,
-            laserLinePositionRef.current.y)
-          .stroke({ color: 0xa30707, width: 10, cap: "round" });
-
-        laserGraphicsRef.current
-          .moveTo(
-            monsterSpriteRef.current.x + (FLYING_MONSTER_RIGHT_EYE_CENTER.x * monsterSpriteRef.current.scale.x) - laserWidth / 2,
-            monsterSpriteRef.current.y + (FLYING_MONSTER_RIGHT_EYE_CENTER.y * monsterSpriteRef.current.scale.x) - laserWidth / 2)
-          .lineTo(
-            laserLinePositionRef.current.x + 20,
-            laserLinePositionRef.current.y)
-          .stroke({ color: 0xa30707, width: 10, cap: "round" });
-        break;
-    }
-  }, []);
-
-  const animateMonster = useCallback((time: Ticker) => {
-    if (monsterSpriteRef.current === null || healthBarRef.current === null) return;
+  const animateMoveTowardsPlayer = useCallback((ticker: Ticker, x: number) => {
+    if (monsterSpriteRef.current === null || healthContainerRef.current === null) return;
 
     if (isPaused === true) {
       if (monsterSpriteRef.current.playing === true) {
@@ -198,16 +103,16 @@ function Monster(props: MonsterProps) {
     const posY = monsterSpriteRef.current.y;
     const centerX = app.screen.width / 2;
 
-    const dx = time.deltaTime;
+    const dx = ticker.deltaTime;
 
-    if (health < healthPointsRefs.current.length) {
-      const healthPoint = healthPointsRefs.current.at(healthPointsRefs.current.length - 1);
+    if (health < healthPointsGraphicsRefs.current.length) {
+      const healthPoint = healthPointsGraphicsRefs.current.at(healthPointsGraphicsRefs.current.length - 1);
 
       if (healthPoint != null) {
         healthPoint.y -= dx * 6;
         if (healthPoint.y < -32) {
           healthPoint.removeFromParent();
-          healthPointsRefs.current.pop();
+          healthPointsGraphicsRefs.current.pop();
         }
       }
     }
@@ -228,96 +133,47 @@ function Monster(props: MonsterProps) {
       if (posY < app.screen.height / 3) {
         monsterSpriteRef.current.y += 0.5;
       }
-    } else {
-      if (state === "GO") {
-        setState("ATTACK_STANCE");
-      }
     }
 
-    healthBarRef.current.x = monsterSpriteRef.current.x;
-    healthBarRef.current.y = monsterSpriteRef.current.y - 20;
-
-
-    switch (state) {
-      case "ATTACK":
-        attackAnimation();
-        animationTimerRef.current = animationTimerRef.current + dx;
-        if (animationTimerRef.current > 45 && hasMadeDamageToPlayer.current === false) {
-          hasMadeDamageToPlayer.current = true;
-          decrementHealth(playerHealth);
-        } else if (animationTimerRef.current > 90) {
-          laserGraphicsRef.current?.clear();
-          laserLinePositionRef.current = { x: 0, y: 0 };
-          animationTimerRef.current = 0;
-          setState("ATTACK_STANCE");
-        }
-        break;
-      case "ATTACK_STANCE":
-        animationTimerRef.current = animationTimerRef.current + dx;
-        if (animationTimerRef.current > 180) {
-          hasMadeDamageToPlayer.current = false;
-          animationTimerRef.current = 0;
-          setState("ATTACK");
-        }
-    }
-
+    healthContainerRef.current.x = monsterSpriteRef.current.x;
+    healthContainerRef.current.y = monsterSpriteRef.current.y - 20;
   }, [
     health,
-    // Function updates on state, no need to add playerHealth as a dep
-    state,
     isPaused
   ]);
 
+  if (health <= 0) return null;
 
-  useTick(animateMonster);
-
-  const onDrawLaserGraphics = useCallback((graphics: Graphics) => {
-    if (monsterSpriteRef.current == null) return;
-
-    if (props.textureName !== FLYING_MONSTER_TEXTURE_NAME) return;
-
-    graphics
-      .moveTo(monsterSpriteRef.current.x, monsterSpriteRef.current.y)
-      .lineTo(monsterSpriteRef.current.x, monsterSpriteRef.current.y + 300)
-      .stroke({ color: 0xff0855, width: 5, cap: "round" });
-  }, []);
-
-  if (textures.length === 0 || health <= 0) return null;
-
-  return (
-    <pixiContainer
-      ref={monsterRef}
-    >
-      <pixiContainer
-        ref={healthBarRef}
-      >
-        {Array.from({ length: props.health }).map((_, index) =>
-          <pixiGraphics
-            key={index}
-            ref={(ref) => {
-              if (ref === undefined) return;
-
-              healthPointsRefs.current[index] = ref;
-            }}
-            draw={(graphics) => onDrawHealthBar(graphics, index)}
-          />
-        )}
-      </pixiContainer>
-      <pixiAnimatedSprite
-        ref={monsterSpriteRef}
-        textures={textures}
-        eventMode="static"
-        onPointerDown={dealDamage}
-        scale={1}
-        animationSpeed={0.1}
-        x={x}
-      />
-      <pixiGraphics
-        ref={laserGraphicsRef}
-        draw={onDrawLaserGraphics}
-      />
-    </pixiContainer>
-  );
+  switch (props.textureName) {
+    case SLOW_MONSTER_TEXTURE_NAME:
+      return <SlowMonster
+        health={health}
+        containerRef={monsterContainerRef}
+        spriteRef={monsterSpriteRef}
+        healthContainerRef={healthContainerRef}
+        healthPointsGraphicsRefs={healthPointsGraphicsRefs}
+        animationTimerRef={animationTimerRef}
+        hasMadeDamageToPlayerRef={hasMadeDamageToPlayerRef}
+        onDrawHealthPoint={onDrawHealthBar}
+        onMoveTowardsPlayer={animateMoveTowardsPlayer}
+        onTakeDamage={takeDamage}
+      />;
+    case FLYING_MONSTER_TEXTURE_NAME:
+      return <FlyingMonster
+        health={health}
+        containerRef={monsterContainerRef}
+        spriteRef={monsterSpriteRef}
+        healthContainerRef={healthContainerRef}
+        healthPointsGraphicsRefs={healthPointsGraphicsRefs}
+        animationTimerRef={animationTimerRef}
+        hasMadeDamageToPlayerRef={hasMadeDamageToPlayerRef}
+        onDrawHealthPoint={onDrawHealthBar}
+        onMoveTowardsPlayer={animateMoveTowardsPlayer}
+        onTakeDamage={takeDamage}
+      />;
+    default:
+      return null;
+  }
 }
 
 export default Monster;

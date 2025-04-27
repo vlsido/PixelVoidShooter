@@ -2,6 +2,7 @@ import {
   useApplication,
   useTick
 } from "@pixi/react";
+import { useSetAtom } from "jotai";
 import {
   AnimatedSprite,
   Container,
@@ -15,12 +16,12 @@ import {
   useMemo,
   useRef
 } from "react";
-import { usePlayer } from "../hooks/usePlayer";
+import { healthAtom } from "../atoms/playerAtoms";
 
 function DeathScreen() {
   const app = useApplication().app;
 
-  const { restoreHealth } = usePlayer();
+  const dispatchHealth = useSetAtom(healthAtom);
 
   const skullRef = useRef<AnimatedSprite | null>(null);
 
@@ -52,7 +53,6 @@ function DeathScreen() {
 
     if (skullRef.current.playing === false) {
       skullRef.current.play();
-
     }
 
   }, []);
@@ -85,6 +85,10 @@ function DeathScreen() {
         stroke: { color: '#4a1850', width: 5, join: 'round' },
       },
     });
+  }, []);
+
+  const handleRestoreHealth = useCallback(() => {
+    dispatchHealth({ type: "restore" });
   }, []);
 
   return (
@@ -132,7 +136,7 @@ function DeathScreen() {
           anchor={0.5}
           // BUG: Fix type error
           textView={tryAgainButtonText}
-          onPointerDown={restoreHealth}
+          onPointerDown={handleRestoreHealth}
           defaultView={tryAgainButtonContainer}
           hoverView={tryAgainButtonContainerHover}
         />

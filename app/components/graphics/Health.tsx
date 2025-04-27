@@ -8,14 +8,15 @@ import {
   Sprite,
   Texture
 } from "pixi.js";
-import { usePlayer } from "../hooks/usePlayer";
 import { PLAYER_HEALTH } from "../constants/player";
 import { useApplication } from "@pixi/react";
+import { useAtomValue } from "jotai";
+import { healthAtom } from "../atoms/playerAtoms";
 
 function Health() {
   const app = useApplication().app;
 
-  const { health } = usePlayer();
+  const health = useAtomValue<number>(healthAtom);
 
   const healthPointsRefs = useRef<(Sprite | null)[]>([]);
 
