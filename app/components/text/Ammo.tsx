@@ -20,11 +20,6 @@ function Ammo() {
     if (bitmapRef.current === null) return;
 
     bitmapRef.current.text = `${ammo.currentBullets}/${ammo.totalBullets}`;
-    bitmapRef.current.style =
-    {
-      fontSize: 36,
-      align: "center"
-    }
 
   }, [ammo]);
 
@@ -58,6 +53,11 @@ function Ammo() {
       <pixiBitmapText
         ref={bitmapRef}
         text="13/13"
+        style={{
+          fontFamily: "Minecraft",
+          fill: 0xffffff,
+          stroke: { color: 0x000000, width: 1, join: 'round' },
+        }}
         x={app.screen.width * 0.06}
         y={app.screen.height - 50}
       />

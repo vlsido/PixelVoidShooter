@@ -8,6 +8,8 @@ export const SLOW_MONSTER = {
   speed: 1,
 };
 
+export const SLOW_MONSTER_SCORE = 150;
+
 export const FLYING_MONSTER_TEXTURE_NAME = "flyingMonster";
 
 export const FLYING_MONSTER_HEALTH = 2;
@@ -17,6 +19,8 @@ export const FLYING_MONSTER = {
   health: FLYING_MONSTER_HEALTH,
   speed: 3,
 };
+
+export const FLYING_MONSTER_SCORE = 100;
 
 // x: 15 for 32x32, 30 for 64x64...
 // y: 10 for 32x32, 20 for 64x64

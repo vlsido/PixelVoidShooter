@@ -25,14 +25,14 @@ import {
 } from "~/components/constants/monsters";
 import { type Position } from "~/components/types/common";
 import { usePlayer } from "~/components/hooks/usePlayer";
-import { useAtomValue } from "jotai";
-import { isPausedAtom } from "~/components/atoms/gameAtoms";
+import { useAtom, useAtomValue } from "jotai";
+import { isPausedAtom, scoreAtom } from "~/components/atoms/gameAtoms";
 
 export interface MonsterProps {
   textureName: string;
   health: number;
   speed: number;
-  onKill: () => void;
+  onKill: (textureName: string) => void;
 }
 
 type MonsterState = "GO" | "ATTACK_STANCE" | "ATTACK";
@@ -68,6 +68,7 @@ function Monster(props: MonsterProps) {
 
   const x = useMemo(() => Math.random() * (app.screen.width * 0.85 - app.screen.width * 0.15) + app.screen.width * 0.15, []);
 
+
   const [state, setState] = useState<MonsterState>("GO");
 
   const [health, setHealth] = useState<number>(props.health);
@@ -98,13 +99,9 @@ function Monster(props: MonsterProps) {
   const textures = useMemo(loadTextures, [state]);
 
   useEffect(() => {
-    monsterSpriteRef.current?.play();
-  }, [textures]);
-
-  useEffect(() => {
     if (health <= 0) {
       monsterRef.current?.removeFromParent();
-      props.onKill();
+      props.onKill(props.textureName);
     }
   }, [health]);
 

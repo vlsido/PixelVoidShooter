@@ -7,7 +7,6 @@ import {
 import GunHand from "../sprites/GunHand";
 import { Assets } from "pixi.js";
 import { useApplication } from "@pixi/react";
-import crosshair from "/crosshair.png";
 import minecraftFontUrl from "/Minecraft.ttf";
 import gunHandUrl from "/gunHand.png";
 import pauseUrl from "/pause.png";
@@ -23,7 +22,11 @@ import flyingMonsterAttackJson from "/flyingMonsterAttack/flyingMonsterAttack.js
 import Monster from "../sprites/Monster/Monster";
 import {
   FLYING_MONSTER,
-  SLOW_MONSTER
+  FLYING_MONSTER_SCORE,
+  FLYING_MONSTER_TEXTURE_NAME,
+  SLOW_MONSTER,
+  SLOW_MONSTER_SCORE,
+  SLOW_MONSTER_TEXTURE_NAME
 } from "../constants/monsters";
 import HUD from "./HUD";
 import { useAmmo } from "../hooks/useAmmo";
@@ -31,8 +34,8 @@ import Background from "./Background";
 import DeathScreen from "./DeathScreen";
 import { usePlayer } from "../hooks/usePlayer";
 import Menu from "./Menu";
-import { useAtom } from "jotai";
-import { isPausedAtom } from "../atoms/gameAtoms";
+import { useAtom, useSetAtom } from "jotai";
+import { isPausedAtom, scoreAtom } from "../atoms/gameAtoms";
 import { type AmmoProps } from "../types/player";
 
 type TMonster = {
@@ -52,6 +55,8 @@ function PixelVoidShooterContainer() {
   ]);
 
   const { health } = usePlayer();
+
+  const dispatchScore = useSetAtom(scoreAtom);
 
   const [isPaused, setIsPaused] = useAtom<boolean>(isPausedAtom);
 
@@ -75,7 +80,6 @@ function PixelVoidShooterContainer() {
 
     const assets = [
       { alias: 'gunHand', src: gunHandUrl },
-      { alias: "crosshair", src: crosshair },
       { alias: "pause", src: pauseUrl },
       { alias: "hell", src: hellUrl },
       heartJson,
@@ -129,7 +133,16 @@ function PixelVoidShooterContainer() {
     return () => window.removeEventListener("keydown", keyDown);
   }, []);
 
-  const onKillMonster = useCallback(() => {
+  const onKillMonster = useCallback((textureName: string) => {
+    switch (textureName) {
+      case SLOW_MONSTER_TEXTURE_NAME:
+        dispatchScore({ type: "add", payload: SLOW_MONSTER_SCORE });
+        break;
+      case FLYING_MONSTER_TEXTURE_NAME:
+        dispatchScore({ type: "add", payload: FLYING_MONSTER_SCORE });
+        break;
+    }
+
     const newMonster = Math.round(Math.random()) === 1
       ? SLOW_MONSTER
       : FLYING_MONSTER;
