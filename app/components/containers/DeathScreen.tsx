@@ -1,7 +1,20 @@
-import { useApplication, useTick } from "@pixi/react";
-import type { AnyText } from "node_modules/@pixi/ui/lib/utils/helpers/text";
-import { AnimatedSprite, Container, Graphics, Sprite, Text, Texture, Ticker } from "pixi.js";
-import { useCallback, useMemo, useRef } from "react";
+import {
+  useApplication,
+  useTick
+} from "@pixi/react";
+import {
+  AnimatedSprite,
+  Container,
+  Graphics,
+  Text,
+  Texture,
+  Ticker
+} from "pixi.js";
+import {
+  useCallback,
+  useMemo,
+  useRef
+} from "react";
 import { usePlayer } from "../hooks/usePlayer";
 
 function DeathScreen() {
@@ -25,19 +38,13 @@ function DeathScreen() {
 
   const tryAgainContainerRef = useRef<Container | null>(null);
 
+  const hellTexture = useMemo(() => Texture.from("hell"), []);
+
   const onDrawDeathScreenGraphics = useCallback((graphics: Graphics) => {
     graphics
       .rect(0, 0, app.screen.width, app.screen.height)
       .fill({ color: 0x555555 });
 
-  }, []);
-
-  const onDrawTryAgainButtonGraphics = useCallback((graphics: Graphics) => {
-
-    if (tryAgainContainerRef.current === null) return;
-    graphics
-      .rect(tryAgainContainerRef.current.x, app.screen.height / 2, 100, 100)
-      .fill({ color: 0x000000 });
   }, []);
 
   const animateSkull = useCallback((time: Ticker) => {
@@ -52,13 +59,18 @@ function DeathScreen() {
 
   useTick(animateSkull);
 
-  const tryAgainButtonContainer = useMemo(() => new Graphics()
-    .roundRect(0, 0, 100, 100, 30)
-    .fill({ color: 0xFFFFFF })
+  const tryAgainButtonContainer = useMemo(() => {
+
+    const graphics = new Graphics()
+      .roundRect(0, 0, 150, 75, 30)
+      .fill({ color: 0xFFFFFF })
+
+    return graphics;
+  }
     , []);
 
   const tryAgainButtonContainerHover = useMemo(() => new Graphics()
-    .roundRect(0, 0, 100, 100, 30)
+    .roundRect(0, 0, 150, 75, 30)
     .fill({ color: 0xFFFCCC }), []);
 
   const tryAgainButtonText = useMemo(() => {
@@ -66,7 +78,7 @@ function DeathScreen() {
       text: "Try again?",
       style: {
         fontFamily: 'Minecraft',
-        fontSize: 48,
+        fontSize: 36,
         fontStyle: 'italic',
         fontWeight: 'bold',
         fill: { color: "0xFFFFFF" },
@@ -77,11 +89,13 @@ function DeathScreen() {
 
   return (
     <pixiContainer
-
     >
       <pixiGraphics
         pivot={0.5}
         draw={onDrawDeathScreenGraphics}
+      />
+      <pixiSprite
+        texture={hellTexture}
       />
       <pixiAnimatedSprite
         textures={skullTextures}
@@ -93,32 +107,31 @@ function DeathScreen() {
         y={app.screen.height / 3}
         animationSpeed={0.05}
       />
-      <pixiContainer>
-        <pixiText
-          text={"YOU DIED"}
-          style={{
-            fontFamily: 'Minecraft',
-            fontSize: 48,
-            fontWeight: 'bold',
-            fill: { color: "0xFFFFFF" },
-            stroke: { color: '#4a1850', width: 5, join: 'round' },
+      <pixiText
+        text={"YOU DIED"}
+        style={{
+          fontFamily: 'Minecraft',
+          fontSize: 48,
+          fontWeight: 'bold',
+          fill: { color: "0xFFFFFF" },
+          stroke: { color: '#4a1850', width: 5, join: 'round' },
 
-          }}
-          anchor={{ x: 0.5, y: 0.5 }}
-          x={app.screen.width / 2}
-          y={app.screen.height * 0.1}
+        }}
+        anchor={{ x: 0.5, y: 0.5 }}
+        x={app.screen.width / 2}
+        y={app.screen.height * 0.1}
 
-        />
-      </pixiContainer>
+      />
       <pixiContainer
         ref={tryAgainContainerRef}
         anchor={0.5}
         y={app.screen.height / 1.5}
-        x={app.screen.width / 2}
+        x={app.screen.width / 2 - 75}
       >
         <fancyButton
           anchor={0.5}
-          text={tryAgainButtonText}
+          // BUG: Fix type error
+          textView={tryAgainButtonText}
           onPointerDown={restoreHealth}
           defaultView={tryAgainButtonContainer}
           hoverView={tryAgainButtonContainerHover}

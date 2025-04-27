@@ -1,17 +1,17 @@
 import {
   useCallback,
   useEffect,
-  useMemo,
   useRef,
   useState
 } from "react";
 import GunHand from "../sprites/GunHand";
-import { Assets, Container } from "pixi.js";
+import { Assets } from "pixi.js";
 import { useApplication } from "@pixi/react";
 import crosshair from "/crosshair.png";
 import minecraftFontUrl from "/Minecraft.ttf";
 import gunHandUrl from "/gunHand.png";
 import pauseUrl from "/pause.png";
+import hellUrl from "/hell.png";
 import heartJson from "/heart/heart.json?url";
 import skullJson from "/skull/skull.json?url";
 import slowMonsterJson from "/slowMonster/slowMonster.json?url";
@@ -77,6 +77,7 @@ function PixelVoidShooterContainer() {
       { alias: 'gunHand', src: gunHandUrl },
       { alias: "crosshair", src: crosshair },
       { alias: "pause", src: pauseUrl },
+      { alias: "hell", src: hellUrl },
       heartJson,
       skullJson,
       slowMonsterJson,
