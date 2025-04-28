@@ -5,7 +5,7 @@ This is a Web-based game made using PixiJS, React, and React Router
 ## Features
 
 - Shoot monsters 
-- Earn score (soon)
+- Earn score
 - Defeat bosses (soon)
 
 ## Getting Started
