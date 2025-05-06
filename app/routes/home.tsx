@@ -55,13 +55,12 @@ export default function Home() {
     <div
       className="h-screen w-screen flex flex-col items-center justify-center bg-[url(/space.jpg)]"
     >
-
-      <p>
+      <p className="font-[minecraft] text-6xl mb-8 pt-4 pl-4 pr-2 bg-black/90 rounded-xl align-[20px]">
         Pixel Void Shooter
       </p>
       <div
         ref={wrapperRef}
-        className="outline-2 rounded-4xl cursor-none overflow-hidden"
+        className="outline-2 rounded-4xl mb-16 cursor-none overflow-hidden"
         style={{
           height: dimensions.height,
           width: dimensions.width,

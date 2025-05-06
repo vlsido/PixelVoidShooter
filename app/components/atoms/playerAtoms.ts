@@ -48,3 +48,5 @@ export const pistolAtom = atom<GunProps>(
     currentBullets: 13
   }
 );
+
+export const isShootingAtom = atom<boolean>(false);

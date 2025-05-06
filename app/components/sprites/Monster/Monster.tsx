@@ -21,11 +21,13 @@ import {
 import {
   atom,
   useAtom,
-  useAtomValue
+  useAtomValue,
+  useSetAtom
 } from "jotai";
 import { isPausedAtom } from "~/components/atoms/gameAtoms";
 import SlowMonster from "./SlowMonster";
 import FlyingMonster from "./FlyingMonster";
+import { isShootingAtom } from "~/components/atoms/playerAtoms";
 
 export interface MonsterProps {
   textureName: string;
@@ -44,6 +46,8 @@ function Monster(props: MonsterProps) {
   } = useAmmo();
 
   const isPaused = useAtomValue<boolean>(isPausedAtom);
+
+  const setIsShooting = useSetAtom(isShootingAtom);
 
   const monsterContainerRef = useRef<Container | null>(null);
 
@@ -80,6 +84,7 @@ function Monster(props: MonsterProps) {
   const takeDamage = useCallback(() => {
     if (ammo.currentBullets > 0 && reloadProgress === 0) {
       decrementAmmo(ammo);
+      setIsShooting(true);
       setHealth(health - 1);
     }
   }, [ammo, health, reloadProgress]);

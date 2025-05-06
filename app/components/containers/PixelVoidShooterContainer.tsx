@@ -9,6 +9,7 @@ import { Assets } from "pixi.js";
 import { useApplication } from "@pixi/react";
 import minecraftFontUrl from "/Minecraft.ttf";
 import gunHandUrl from "/gunHand.png";
+import gunSparkJson from "/gunSpark/gunSpark.json?url";
 import pauseUrl from "/pause.png";
 import hellUrl from "/hell.png";
 import heartJson from "/heart/heart.json?url";
@@ -81,6 +82,7 @@ function PixelVoidShooterContainer() {
       { alias: 'gunHand', src: gunHandUrl },
       { alias: "pause", src: pauseUrl },
       { alias: "hell", src: hellUrl },
+      gunSparkJson,
       heartJson,
       skullJson,
       slowMonsterJson,
