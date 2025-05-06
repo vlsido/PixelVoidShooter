@@ -141,7 +141,7 @@ function FlyingMonster(props: FlyingMonsterProps) {
   const handleAnimation = useCallback((ticker: Ticker) => {
     props.onMoveTowardsPlayer(ticker, x);
 
-    if (props.spriteRef.current === null) return;
+    if (props.spriteRef.current === null || isPaused === true) return;
 
     const monsterScaleX = props.spriteRef.current.scale.x;
 
